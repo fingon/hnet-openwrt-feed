@@ -15,9 +15,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bird
-PKG_SOURCE_VERSION:=0bd161e3c1c05a9db398f027a2d94a2b932960fd
-PKG_VERSION:=2012-10-23-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=377935663df70f108f736e5a31cceb6f689205ca
+PKG_VERSION:=2012-10-29-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=$(PKG_VERSION)
+
 
 PKG_SOURCE_URL:=git://github.com/fingon/bird-ext-lsa.git
 PKG_SOURCE_PROTO:=git
@@ -121,7 +122,8 @@ define Package/bird$(2)/install
 	$(INSTALL_DATA) ./files/bird$(2).conf $$(1)/etc/
 	$(INSTALL_DIR)  $$(1)/etc/init.d
 	$(INSTALL_BIN)  ./files/bird$(2).init $$(1)/etc/init.d/bird$(2)
-
+	$(INSTALL_DIR)  $$(1)/usr/share/bird
+	$(INSTALL_DATA) $$(PKG_BUILD_DIR)/elsa.lua $$(1)/usr/share/bird/
 endef
 
 define Package/bird$(2)/conffiles

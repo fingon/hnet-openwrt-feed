@@ -1,0 +1,14 @@
+#!/bin/sh /etc/rc.common
+# Note: The text above has to be VERBATIM like that, or it won't be
+# auto-starting!
+SCRIPT=/lib/netkit/netkit-phase1
+START=15
+
+start() {
+    . $SCRIPT start
+}
+
+stop() {
+    . $SCRIPT stop
+}
+
