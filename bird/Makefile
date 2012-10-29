@@ -4,6 +4,14 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 
+# Lots of snipping from the original packages/net/bird/ package; we
+# provide only bird6, with LUA support, but no batteries (=no init
+# scripts/conf).
+#
+# This division is ~natural as the bird changes to support Lua are
+# minimal, but as the Lua repository used is not strictly tied to
+# bird, keeping them separated is sensible.
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bird
@@ -25,6 +33,9 @@ define Package/bird/Default
   URL:=http://bird.network.cz/
   DEPENDS:= +liblua
 endef
+
+# These dependencies are in separate LUA package
+# +ip +luasocket
 
 define Package/birdc/Default
   TITLE:=The BIRD command-line client
@@ -60,23 +71,6 @@ should install BIRD command-line client together with BIRD.
 
 endef
 
-define Package/bird4
-$(call Package/bird/Default)
-  SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=Routing and Redirection
-  TITLE+= (IPv4)
-endef
-
-define Package/birdc4
-$(call Package/birdc/Default)
-  SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=Routing and Redirection
-  TITLE+= (IPv4)
-  DEPENDS+= +bird4
-endef
-
 define Package/bird6
 $(call Package/bird/Default)
   SECTION:=ipv6
@@ -90,19 +84,6 @@ $(call Package/birdc/Default)
   CATEGORY:=IPv6
   TITLE+= (IPv6)
   DEPENDS+= +bird6
-endef
-
-define Package/bird4/description
-$(call Package/bird/Default/description1)
-This is IPv4 version of BIRD, it supports OSPFv2, RIPv2 and BGP
-protocols.
-
-$(call Package/bird/Default/description2)
-endef
-
-define Package/birdc4/description
-$(call Package/bird/Default/description1)
-$(call Package/bird/Default/description3)
 endef
 
 define Package/bird6/description
@@ -155,10 +136,7 @@ endef
 endef
 
 
-$(eval $(call Build/Template,bird4,4, --disable-ipv6))
 $(eval $(call Build/Template,bird6,6, --enable-ipv6))
 
-$(eval $(call BuildPackage,bird4))
-$(eval $(call BuildPackage,birdc4))
 $(eval $(call BuildPackage,bird6))
 $(eval $(call BuildPackage,birdc6))
