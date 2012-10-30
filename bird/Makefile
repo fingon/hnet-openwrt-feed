@@ -29,75 +29,35 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/bird/Default
-  TITLE:=The BIRD Internet Routing Daemon
+define Package/bird6-elsa/Default
+  TITLE:=The BIRD Internet Routing Daemon (IPv6)
   URL:=http://bird.network.cz/
   DEPENDS:= +liblua
+  SECTION:=ipv6
+  CATEGORY:=IPv6
 endef
 
 # These dependencies are in separate LUA package
 # +ip +luasocket
 
-define Package/birdc/Default
-  TITLE:=The BIRD command-line client
-  URL:=http://bird.network.cz/
-  DEPENDS:= +libreadline +libncurses
-endef
+define Package/bird6-elsa/description
 
-define Package/bird/Default/description1
 BIRD is an internet routing daemon which manages TCP/IP routing tables
 with support of modern routing protocols, easy to use configuration
 interface and powerful route filtering language. It is lightweight and
 efficient and therefore appropriate for small embedded routers.
 
-endef
+This is a variant which supports external LSAs.
 
-define Package/bird/Default/description2
+This is IPv6 version of BIRD, it supports OSPFv3, RIPng and BGP
+protocols.
+
 In BGP, BIRD supports communities, multiprotocol extensions, MD5
 authentication, 32bit AS numbers and could act as a route server or a
 route reflector. BIRD also supports multiple RIBs, multiple kernel
 routing tables and redistribution between the protocols with a powerful
 configuration syntax.
 
-endef
-
-define Package/bird/Default/description3
-This is a BIRD command-line client. It is used to send commands to BIRD,
-commands can perform simple actions such as enabling/disabling of
-protocols, telling BIRD to show various information, telling it to show
-a routing table filtered by a filter, or asking BIRD to reconfigure.
-
-Unless you can't afford dependency on ncurses and readline, you
-should install BIRD command-line client together with BIRD.
-
-endef
-
-define Package/bird6
-$(call Package/bird/Default)
-  SECTION:=ipv6
-  CATEGORY:=IPv6
-  TITLE+= (IPv6)
-endef
-
-define Package/birdc6
-$(call Package/birdc/Default)
-  SECTION:=ipv6
-  CATEGORY:=IPv6
-  TITLE+= (IPv6)
-  DEPENDS+= +bird6
-endef
-
-define Package/bird6/description
-$(call Package/bird/Default/description1)
-This is IPv6 version of BIRD, it supports OSPFv3, RIPng and BGP
-protocols.
-
-$(call Package/bird/Default/description2)
-endef
-
-define Package/birdc6/description
-$(call Package/bird/Default/description1)
-$(call Package/bird/Default/description3)
 endef
 
 CONFIGURE_ARGS += --with-linux-headers="$(LINUX_DIR)"
@@ -130,15 +90,8 @@ define Package/bird$(2)/conffiles
 /etc/bird$(2).conf
 endef
 
-define Package/birdc$(2)/install
-	$(INSTALL_DIR) $$(1)/usr/sbin
-	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/birdc$(2) $$(1)/usr/sbin/
-endef
-
 endef
 
 
 $(eval $(call Build/Template,bird6,6, --enable-ipv6))
-
 $(eval $(call BuildPackage,bird6))
-$(eval $(call BuildPackage,birdc6))
