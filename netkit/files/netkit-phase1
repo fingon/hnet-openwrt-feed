@@ -93,7 +93,12 @@ case "$1" in
 
       # Configure virtual host for the first boot
       if [ ! -e /etc/vhostconfigured ]; then
-         echo $HOSTNAME > /etc/netkit-hostname
+         # The /etc/init.d/boot ran already -> just override for this boot
+         echo $HOSTNAME > /proc/sys/kernel/hostname
+
+         # Store for later boots
+         uci set "system.@system[0].hostname=$HOSTNAME"
+         uci commit system
 
          if [ -d /hostlab/shared ]; then
             echo "Copying shared files from /hostlab/shared/..."
