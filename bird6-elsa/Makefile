@@ -15,8 +15,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bird6-elsa
-PKG_SOURCE_VERSION:=e07289549ca643949281da3c9ef1315cae70f4a8
-PKG_VERSION:=2012-10-31-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=8afaee639b0f542912d7bec000a5da1affa84794
+PKG_VERSION:=2012-11-04-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=git://github.com/fingon/bird-ext-lsa.git
@@ -31,7 +31,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/bird6-elsa
   TITLE:=The BIRD Internet Routing Daemon (IPv6)
   URL:=http://bird.network.cz/
-  DEPENDS:= +liblua
+  DEPENDS:= +liblua +libhistory +libncurses +libreadline
   SECTION:=ipv6
   CATEGORY:=IPv6
 endef
@@ -66,6 +66,7 @@ endef
 define Package/bird6-elsa/install
 	$(INSTALL_DIR)  $(1)/usr/sbin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/bird $(1)/usr/sbin/bird6-elsa
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/birdc $(1)/usr/sbin/birdc6-elsa
 #	$(INSTALL_BIN)  ./files/bird$(2)loop $(1)/usr/sbin/
 #	$(INSTALL_DIR)  $(1)/etc
 #	$(INSTALL_DATA) ./files/bird$(2).conf $(1)/etc/
