@@ -15,8 +15,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bird6-elsa
-PKG_SOURCE_VERSION:=8afaee639b0f542912d7bec000a5da1affa84794
-PKG_VERSION:=2012-11-04-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=d07c3ae78d5e6f8dd0349311734b3161bb336e30
+PKG_VERSION:=2012-11-06-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=git://github.com/fingon/bird-ext-lsa.git
@@ -35,9 +35,6 @@ define Package/bird6-elsa
   SECTION:=ipv6
   CATEGORY:=IPv6
 endef
-
-# These dependencies are in separate LUA package
-# +ip +luasocket
 
 define Package/bird6-elsa/description
   BIRD is an internet routing daemon which manages TCP/IP routing tables
