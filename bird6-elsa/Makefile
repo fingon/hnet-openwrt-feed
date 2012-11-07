@@ -31,7 +31,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/bird6-elsa
   TITLE:=The BIRD Internet Routing Daemon (IPv6)
   URL:=http://bird.network.cz/
-  DEPENDS:= +liblua +libhistory +libncurses +libreadline
+  DEPENDS:= +liblua +libncurses +libreadline
   SECTION:=ipv6
   CATEGORY:=IPv6
 endef
