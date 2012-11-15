@@ -1,0 +1,49 @@
+#!/bin/sh
+#-*-sh-*-
+#
+# $Id: use-pd $
+#
+# Author: Markus Stenberg <fingon@iki.fi>
+#
+# Created:       Tue Jul 24 11:01:51 2012 mstenber
+# Last modified: Thu Nov 15 13:10:12 2012 mstenber
+# Edit time:     23 min
+#
+
+start() {
+    if [ "x$new_ip6_prefix" = x ]
+    then
+        return
+    fi
+
+    # Just manipulate BIRD state
+    skvtool \
+        "pd-prefix.$interface=${new_ip6_prefix}" \
+        "pd-dns.$interface=${new_dhcp6_name_servers}" \
+        "pd-dns-search.$interface=${new_dhcp6_domain_search}"
+}
+
+stop() {
+    if [ "x$old_ip6_prefix" = x ]
+    then
+        return
+    fi
+
+    args="stop ${new_ip6_prefix} ${interface}"
+
+    # Just manipulate BIRD state
+    skvtool "pd-prefix.$interface="
+}
+
+case $reason in
+    BOUND6)
+        start
+        ;;
+    RENEW6|REBIND6)
+        stop
+        start
+        ;;
+    DEPREF6|EXPIRE6|RELEASE6|STOP6)
+        stop
+	;;
+esac

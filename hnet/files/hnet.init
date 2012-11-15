@@ -1,0 +1,43 @@
+#!/bin/sh /etc/rc.common
+# Author: Markus Stenberg <markus.stenberg@iki.fi>
+# Copyright (C) 2012 cisco Systems, Inc.
+
+START=90
+
+SERVICE_DAEMONIZE=1
+SERVICE_WRITE_PID=1
+
+start() {
+        # Needed by BIRD
+        mkdir -p /usr/local/var/run
+
+        # Needed by dhcpd's we trigger
+        mkdir -p /var/db
+
+        # Create dummy lease files
+        touch /var/db/dhcpd.leases
+        touch /var/db/dhcpd6.leases
+
+        # Stop+disable some services that conflict with us
+        for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall
+        do
+                if [ -f /etc/init.d/$SERVICE ]
+                then
+                        /etc/init.d/$SERVICE stop
+                        /etc/init.d/$SERVICE disable
+                fi
+        done
+
+	service_start /usr/share/lua/pm.lua
+	service_start /usr/sbin/bird6-elsa -d
+}
+
+stop() {
+	service_stop /usr/share/lua/pm.lua
+	service_stop /usr/sbin/bird6-elsa
+}
+
+reload() {
+	service_reload /usr/sbin/bird6-elsa
+        # Intentionally not reloading pm.lua - it has no config!
+}

@@ -1,0 +1,20 @@
+#!/bin/sh 
+#-*-sh-*-
+#
+# $Id: dhclient-exit-hooks $
+#
+# Author: Markus Stenberg <fingon@iki.fi>
+#
+# Created:       Wed Jul 25 13:33:18 2012 mstenber
+# Last modified: Wed Jul 25 13:34:03 2012 mstenber
+# Edit time:     2 min
+#
+
+# Quite bruteforce - just invoke everything!
+
+SCRIPTDIR=/etc/dhcp/dhclient-exit-hooks.d
+
+for SCRIPT in $SCRIPTDIR/*
+do
+        . $SCRIPT
+done
