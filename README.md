@@ -1,5 +1,5 @@
     Created:       Wed Nov  7 14:15:39 2012 mstenber
-    Last modified: Mon Nov 19 19:25:21 2012 mstenber
+    Last modified: Mon Nov 19 19:30:53 2012 mstenber
 
 hnet-openwrt-feed
 =================
@@ -42,17 +42,15 @@ very much, but 'y' at least seems to work.)
 
 Then, make new image, flash it, and configure to your's heart's content.
 
-NOTE: By default, the current version has several downsides:
+NOTE: By default, the current version has several limitations:
 
-* firewall is disabled
+* firewall is disabled (as we don't have good integration with 
+  OpenWRT zones yet)
+  
 * you cannot choose (using some elegant way, at any rate) the active interfaces
 
 .. and therefore the hnet package is disabled even if built into the
-image. That caveat said, this is how to start it
-
-# Enabling hnet package on a router
-
-To test just once (without changing permanent configuration):
+image. To test just once (without changing permanent configuration):
 
     /etc/init.d/hnet start
 
@@ -62,10 +60,9 @@ To enable it every boot:
 
 # If you see something odd..
 
-First, please look at [TODO][TODO] in
- - it might be a known
-misfeature. If not, feel free to e-mail, start an issue here, or better
-yet, fix it yourself.
+First, please look at [TODO][TODO]. Whatever you find, it might be a known
+misfeature. If not, feel free to fix it yourself, start an issue here, or
+e-mail me about it. 
 
 [core]: https://github.com/fingon/hnet-core/
 [TODO]: https://github.com/fingon/hnet-core/blob/master/TODO
