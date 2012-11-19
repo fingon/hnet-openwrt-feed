@@ -1,5 +1,5 @@
     Created:       Wed Nov  7 14:15:39 2012 mstenber
-    Last modified: Mon Nov 19 19:20:51 2012 mstenber
+    Last modified: Mon Nov 19 19:25:21 2012 mstenber
 
 hnet-openwrt-feed
 =================
@@ -13,19 +13,34 @@ dependencies.
 
 # Simple usage
 
-## Add following line to feeds.conf
+We make the assumption that the reader is moderately familiar with
+[OpenWRT build process][root]. If not, it might be good time to brush up..
+
+Get the source tree of AA:
+
+    git clone git://nbd.name/attitude_adjustment.git
+
+Add following line to feeds.conf:
 
     src-git hnet git://github.com/fingon/hnet-openwrt-feed.git
 
-## Run
+Update feeds + install hnet by running:
 
     scripts/feeds update
     scripts/feeds install hnet
+
+.. and then either 
+
     make oldconfig
 
-(and select things, or make menuconfig + choose 'hnet' under IPv6)
+.. or ..
 
-## Make new image, flash it, and configure to your's heart's content..
+    make menuconfig
+
+At any rate, you want to say 'y' or 'm' to hnet package. ('m' not tested
+very much, but 'y' at least seems to work.)
+
+Then, make new image, flash it, and configure to your's heart's content.
 
 NOTE: By default, the current version has several downsides:
 
@@ -54,3 +69,4 @@ yet, fix it yourself.
 
 [core]: https://github.com/fingon/hnet-core/
 [TODO]: https://github.com/fingon/hnet-core/blob/master/TODO
+[root]: http://wiki.openwrt.org/doc/howto/build
