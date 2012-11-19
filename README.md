@@ -1,5 +1,5 @@
     Created:       Wed Nov  7 14:15:39 2012 mstenber
-    Last modified: Mon Nov 19 19:18:57 2012 mstenber
+    Last modified: Mon Nov 19 19:20:51 2012 mstenber
 
 hnet-openwrt-feed
 =================
@@ -13,11 +13,11 @@ dependencies.
 
 # Simple usage
 
-* Add following line to feeds.conf
+## Add following line to feeds.conf
 
     src-git hnet git://github.com/fingon/hnet-openwrt-feed.git
 
-* Run
+## Run
 
     scripts/feeds update
     scripts/feeds install hnet
@@ -25,7 +25,7 @@ dependencies.
 
 (and select things, or make menuconfig + choose 'hnet' under IPv6)
 
-* Make new image, flash it, and configure to your's heart's content..
+## Make new image, flash it, and configure to your's heart's content..
 
 NOTE: By default, the current version has several downsides:
 
