@@ -7,6 +7,9 @@ START=90
 SERVICE_DAEMONIZE=1
 SERVICE_WRITE_PID=1
 
+BIRD=/usr/sbin/bird6-elsa
+PM=/usr/share/lua/pm.lua
+
 start() {
         # Needed by BIRD
         mkdir -p /usr/local/var/run
@@ -24,20 +27,58 @@ start() {
                 if [ -f /etc/init.d/$SERVICE ]
                 then
                         /etc/init.d/$SERVICE stop
-                        /etc/init.d/$SERVICE disable
+                        # This would be better, but more radical
+                        # choice. For the time being, we just do the
+                        # stop, and hope it's enough (although it
+                        # makes booting device up somewhat less
+                        # efficient than it could be)
+                        #/etc/init.d/$SERVICE disable
                 fi
         done
 
-	service_start /usr/share/lua/pm.lua
-	service_start /usr/sbin/bird6-elsa -d
+        if [ -d /hostlab ]
+        then
+            HOSTNAME=`cat /proc/sys/kernel/hostname`
+            # Netkit debugging log storage elsewhere than the virtual machine
+            LOGDIR=/hostlab/logs/$HOSTNAME
+            mkdir -p $LOGDIR
+
+            # First, start pm
+            ENABLE_MST_DEBUG=1 $PM 2>&1 > $LOGDIR/pm.log &
+
+            # Then wait a second (for it to get the skv port up)
+            sleep 1
+
+            # Rewrite the configuration file to store to logfile
+            # on simulated UML host as well
+            CONF=/etc/bird6.conf
+            RCONF=/tmp/bird6.conf
+
+            egrep -v '^log syslog all' $CONF > $RCONF
+            echo "log \"$LOGDIR/bird6.log\" all;" >> $RCONF
+
+            # And then fire up the BIRD
+            ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
+        else
+	    service_start $BIRD -d
+	    service_start $PM
+        fi
 }
 
 stop() {
-	service_stop /usr/share/lua/pm.lua
-	service_stop /usr/sbin/bird6-elsa
+        if [ -d /hostlab ]
+        then
+            # Netkit case - just use killall
+            # (And _hope_ nobody else has lua process name, smork)
+            killall bird6-elsa
+            killall lua
+        else
+	    service_stop $PM
+	    service_stop $BIRD
+        fi
 }
 
 reload() {
-	service_reload /usr/sbin/bird6-elsa
-        # Intentionally not reloading pm.lua - it has no config!
+    stop
+    start
 }

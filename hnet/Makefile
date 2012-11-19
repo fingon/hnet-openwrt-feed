@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=54cb8144149d6c63c264b9254b45f1dcb548735e
-PKG_VERSION:=2012-11-13-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=a64d9d11af0c9eb2a7a766b94a21d1fb253e4395
+PKG_VERSION:=2012-11-19-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=$(PKG_VERSION)
 
 PKG_SOURCE_URL:=https://github.com/fingon/hnet-core.git
@@ -18,7 +18,18 @@ define Package/hnet
   CATEGORY:=IPv6
   TITLE:=hnet
   URL:=https://github.com/fingon/hnet-core
+  # These are 'core depends' that we need to function at all
   DEPENDS:=+lua +ip +luasocket +luavstruct +luamd5 +bird6-elsa
+  # These are sometime replaceable ones, but in principle they are helpful too
+  # (Used to provide services / get configuration)
+  DEPENDS+=+bird4
+  DEPENDS+=+radvd
+  # These we should get rid of at some point (replace servers with
+  # dnsmasq, and client's with something - busybox?)
+  DEPENDS+=+isc-dhcp-server-ipv4
+  DEPENDS+=+isc-dhcp-server-ipv6
+  DEPENDS+=+isc-dhcp-client-ipv4
+  DEPENDS+=+isc-dhcp-client-ipv6
 endef
 
 define Package/hnet/description

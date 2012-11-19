@@ -1,5 +1,5 @@
 Created:       Wed Nov  7 14:15:39 2012 mstenber
-Last modified: Wed Nov  7 14:17:20 2012 mstenber
+Last modified: Mon Nov 19 13:40:55 2012 mstenber
 
 This is OpenWrt convenience feed for hnet-core and all it's dependencies.
 
@@ -15,6 +15,4 @@ src-git hnet git://github.com/fingon/hnet-openwrt-openwrt-feed.git
 (and select things, or make menuconfig + choose 'hnet' under IPv6)
 
 .. make new image, and configure to your's heart's content
-
-(TODO - sample configuration feed package coming 'soon')
 
