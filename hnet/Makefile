@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=a64d9d11af0c9eb2a7a766b94a21d1fb253e4395
-PKG_VERSION:=2012-11-19-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=5733955da064a3f6463bd3b99e29781811552f3b
+PKG_VERSION:=2012-11-20-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=$(PKG_VERSION)
 
 PKG_SOURCE_URL:=https://github.com/fingon/hnet-core.git
@@ -30,6 +30,8 @@ define Package/hnet
   DEPENDS+=+isc-dhcp-server-ipv6
   DEPENDS+=+isc-dhcp-client-ipv4
   DEPENDS+=+isc-dhcp-client-ipv6
+  # Require rdisc6 just so that network gets set up bit faster
+  DEPENDS+=+rdisc6
 endef
 
 define Package/hnet/description
