@@ -1,5 +1,5 @@
     Created:       Wed Nov  7 14:15:39 2012 mstenber
-    Last modified: Mon Nov 19 19:30:53 2012 mstenber
+    Last modified: Thu Nov 22 16:16:33 2012 mstenber
 
 hnet-openwrt-feed
 =================
@@ -10,6 +10,13 @@ License: See COPYING - GPLv2.
 
 This is OpenWrt convenience feed for [hnet-core][core] and all it's
 dependencies.
+
+# Caveats
+
+BIRD OSPF doesn't work very well on bridged links. Please make sure that
+the OpenWRT box you have is configured without bridging whatsoever, to make
+sure. If bridged link is encountered, no OSPF neighbor relationships will
+NOT be established, and your hnet setup will simply fail to work.
 
 # Simple usage
 
