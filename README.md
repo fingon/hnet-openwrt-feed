@@ -1,5 +1,5 @@
     Created:       Wed Nov  7 14:15:39 2012 mstenber
-    Last modified: Thu Nov 22 16:16:33 2012 mstenber
+    Last modified: Thu Nov 22 16:17:10 2012 mstenber
 
 hnet-openwrt-feed
 =================
@@ -13,9 +13,9 @@ dependencies.
 
 # Caveats
 
-BIRD OSPF doesn't work very well on bridged links. Please make sure that
-the OpenWRT box you have is configured without bridging whatsoever, to make
-sure. If bridged link is encountered, no OSPF neighbor relationships will
+BIRD's OSPF(v3) doesn't work very well on bridged links. Please make sure
+that the OpenWRT box you have is configured without bridging whatsoever, to
+make sure. If bridged link is encountered, OSPF neighbor relationships will
 NOT be established, and your hnet setup will simply fail to work.
 
 # Simple usage
