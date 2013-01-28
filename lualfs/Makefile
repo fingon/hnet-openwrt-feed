@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=lualfs
 PKG_SOURCE_VERSION:=d71c63cdb776f7d25313f8fcd14f07512ba1f83e
 PKG_VERSION:=2012-10-29-$(PKG_SOURCE_VERSION)
-PKG_RELEASE:=$(PKG_VERSION)
+PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://github.com/keplerproject/luafilesystem.git
 PKG_SOURCE_PROTO:=git

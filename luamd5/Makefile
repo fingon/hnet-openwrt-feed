@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=luamd5
 PKG_SOURCE_VERSION:=def7fa6343e359f2b3a2dbddf3a3463a6b9643d3
 PKG_VERSION:=2012-11-04-$(PKG_SOURCE_VERSION)
-PKG_RELEASE:=$(PKG_VERSION)
+PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://github.com/keplerproject/md5.git
 PKG_SOURCE_PROTO:=git

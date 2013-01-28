@@ -16,7 +16,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/netkit
   TITLE:=NetKit integration for OpenWRT
-  MAINTAINER:Markus Stenberg <markus.stenberg@iki.fi>
+  MAINTAINER:=Markus Stenberg <markus.stenberg@iki.fi>
   PKGARCH:=uml
 endef
 
