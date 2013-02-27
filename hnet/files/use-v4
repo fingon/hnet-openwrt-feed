@@ -8,8 +8,8 @@
 #  Copyright (c) 2012 cisco Systems, Inc.
 #
 # Created:       Tue Oct 30 13:30:44 2012 mstenber
-# Last modified: Tue Oct 30 15:28:54 2012 mstenber
-# Edit time:     14 min
+# Last modified: Wed Feb 27 14:22:51 2013 mstenber
+# Edit time:     19 min
 #
 
 stop() {
@@ -17,9 +17,7 @@ stop() {
     iptables -t nat -F POSTROUTING
 
     # Clear DNS parameters in SKV
-    skvtool \
-        "dhcp-dns.$interface=" \
-        "dhcp-dns-search.$interface="
+    skvtool "dhcp.$interface-={}" 
 }
 
 start() {
@@ -36,9 +34,8 @@ start() {
     iptables -t nat -A POSTROUTING -o $interface -j MASQUERADE
 
     # Set up DNS parameters in SKV
-    skvtool \
-        "dhcp-dns.$interface=${new_domain_name_servers}" \
-        "dhcp-dns-search.$interface=${new_domain_search}"
+    skvtool "dhcp.$interface-={}" 
+    skvtool "dhcp.$interface+={\"dns\":\"${new_domain_name_servers}\",\"dns_search\":\"${new_domain_search}\"}"
 }
 
 

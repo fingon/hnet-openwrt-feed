@@ -6,8 +6,8 @@
 # Author: Markus Stenberg <fingon@iki.fi>
 #
 # Created:       Tue Jul 24 11:01:51 2012 mstenber
-# Last modified: Thu Nov 15 13:10:12 2012 mstenber
-# Edit time:     23 min
+# Last modified: Tue Feb 26 17:24:14 2013 mstenber
+# Edit time:     47 min
 #
 
 start() {
@@ -17,10 +17,14 @@ start() {
     fi
 
     # Just manipulate BIRD state
+
+    ARG="pd.$interface+={\"prefix\":\"${new_ip6_prefix}\",\"dns\":\"${new_dhcp6_name_servers}\",\"dns_search\":\"${new_dhcp6_domain_search}\",\"pclass\":\"${new_dhcp6_prefix_class}\"}"
+    #echo "calling skvtool $ARG" >> /tmp/use-pd.log
+
+    # Remove old + then add new, in one atomic-ish transaction (hooray)
     skvtool \
-        "pd-prefix.$interface=${new_ip6_prefix}" \
-        "pd-dns.$interface=${new_dhcp6_name_servers}" \
-        "pd-dns-search.$interface=${new_dhcp6_domain_search}"
+        "pd.$interface-={\"prefix\":\"${new_ip6_prefix}\"}" \
+        "$ARG"
 }
 
 stop() {
@@ -32,8 +36,12 @@ stop() {
     args="stop ${new_ip6_prefix} ${interface}"
 
     # Just manipulate BIRD state
-    skvtool "pd-prefix.$interface="
+    skvtool \
+        "pd.$interface-={\"prefix\":\"${old_ip6_prefix}\"}" \
+        "pd.$interface-={\"prefix\":\"${new_ip6_prefix}\"}"
 }
+
+echo `date` $reason $interface : ${old_ip6_prefix} / ${new_ip6_prefix} >> /tmp/use-pd.log
 
 case $reason in
     BOUND6)

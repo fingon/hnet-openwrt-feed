@@ -2,6 +2,9 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
+# Disable ULA generation + use fake DHCPv6d for prefix class support
+PM_ARGS="--disable_ula -f"
+
 START=90
 
 SERVICE_DAEMONIZE=1
@@ -9,6 +12,7 @@ SERVICE_WRITE_PID=1
 
 BIRD=/usr/sbin/bird6-elsa
 PM=/usr/share/lua/pm.lua
+MDNS=/usr/share/lua/mdns.lua
 
 start() {
         # Needed by BIRD
@@ -44,10 +48,13 @@ start() {
             mkdir -p $LOGDIR
 
             # First, start pm
-            ENABLE_MST_DEBUG=1 $PM 2>&1 > $LOGDIR/pm.log &
+            ENABLE_MST_DEBUG=1 $PM $PM_ARGS 2>&1 > $LOGDIR/pm.log &
 
             # Then wait a second (for it to get the skv port up)
             sleep 1
+
+            # Then MDNS
+            ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
 
             # Rewrite the configuration file to store to logfile
             # on simulated UML host as well
@@ -62,6 +69,7 @@ start() {
         else
 	    service_start $BIRD -d
 	    service_start $PM
+	    service_start $MDNS
         fi
 }
 
@@ -69,10 +77,11 @@ stop() {
         if [ -d /hostlab ]
         then
             # Netkit case - just use killall
-            # (And _hope_ nobody else has lua process name, smork)
+            # (And _hope_ nobody else has lua process name, smirk)
             killall bird6-elsa
             killall lua
         else
+	    service_stop $MDNS
 	    service_stop $PM
 	    service_stop $BIRD
         fi

@@ -1,9 +1,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=5733955da064a3f6463bd3b99e29781811552f3b
-PKG_VERSION:=2012-11-20-$(PKG_SOURCE_VERSION)
-PKG_RELEASE:=$(PKG_VERSION)
+PKG_SOURCE_VERSION:=6edf9a04c74fc6d2e114af77d0364c26409dc6b6
+PKG_VERSION:=2013-02-27-$(PKG_SOURCE_VERSION)
+PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://github.com/fingon/hnet-core.git
 PKG_SOURCE_PROTO:=git
@@ -19,7 +19,7 @@ define Package/hnet
   TITLE:=hnet
   URL:=https://github.com/fingon/hnet-core
   # These are 'core depends' that we need to function at all
-  DEPENDS:=+lua +ip +luasocket +luavstruct +luamd5 +bird6-elsa
+  DEPENDS:=+lua +ip +hnet-luasocket +luavstruct +luamd5 +bird6-elsa
   # These are sometime replaceable ones, but in principle they are helpful too
   # (Used to provide services / get configuration)
   DEPENDS+=+bird4
@@ -51,8 +51,7 @@ define Package/hnet/install
 	$(CP) $(PKG_BUILD_DIR)/*.lua $(1)/usr/share/lua
 	$(INSTALL_DIR) $(1)/usr/sbin
 	ln -s /usr/share/lua/skvtool.lua $(1)/usr/sbin/skvtool
-	chmod a+x $(1)/usr/share/lua/pm.lua
-	chmod a+x $(1)/usr/share/lua/skvtool.lua
+	chmod a+x $(1)/usr/share/lua/{pm,mdns,skvtool}.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua
 	$(CP) $(PKG_BUILD_DIR)/thirdparty/*.lua $(1)/usr/lib/lua
 	$(INSTALL_DIR) $(1)/usr/share/hnet
@@ -63,6 +62,7 @@ define Package/hnet/install
 	$(INSTALL_DIR) $(1)/etc/dhcp/dhclient-exit-hooks.d
 	chmod a+x $(1)/sbin/dhclient-script
 	$(CP) files/dhclient-exit-hooks  $(1)/etc
+	$(CP) files/dhclient.conf $(1)/etc/dhcp/dhclient6-hnet.conf
 	$(CP) files/use-pd  $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/use-v4  $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/bird6.conf  $(1)/etc
