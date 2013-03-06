@@ -1,5 +1,5 @@
     Created:       Wed Nov  7 14:15:39 2012 mstenber
-    Last modified: Thu Nov 22 16:17:10 2012 mstenber
+    Last modified: Wed Mar  6 15:16:40 2013 mstenber
 
 hnet-openwrt-feed
 =================
@@ -36,16 +36,18 @@ Update feeds + install hnet by running:
     scripts/feeds update
     scripts/feeds install hnet
 
-.. and then either 
-
-    make oldconfig
-
-.. or ..
+.. and then 
 
     make menuconfig
 
-At any rate, you want to say 'y' or 'm' to hnet package. ('m' not tested
-very much, but 'y' at least seems to work.)
+Some changes from defaults are needed. One option is to use the
+ietf86-config file provided within the repository (copy ietf86-config to
+.config), or the changes can be also made by hand: convert the base libc
+from uClibc to eglibc (advanced configuration options -> toolchain options
+-> C library implementation). Then, you want to choose 'y' for hnet package
+(IPv6 -> hnet). ('m' not tested very much, but 'y' at least seems to
+work.). Finally, appropriate target should be chosen (ietf86-config
+defaults to Buffalo WZR-HP-AG300H / WZR-600DHR). 
 
 Then, make new image, flash it, and configure to your's heart's content.
 
