@@ -68,7 +68,7 @@ start() {
             ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
         else
 	    service_start $BIRD -d
-	    service_start $PM
+	    service_start $PM $PM_ARGS 
 	    service_start $MDNS
         fi
 }
