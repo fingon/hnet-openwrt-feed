@@ -6,8 +6,8 @@
 # Author: Markus Stenberg <fingon@iki.fi>
 #
 # Created:       Tue Jul 24 11:01:51 2012 mstenber
-# Last modified: Tue Feb 26 17:24:14 2013 mstenber
-# Edit time:     47 min
+# Last modified: Fri Mar  8 11:37:59 2013 mstenber
+# Edit time:     55 min
 #
 
 start() {
@@ -16,9 +16,21 @@ start() {
         return
     fi
 
+    life=""
+    if [ ! "x$new_preferred_life" = x ]
+    then
+        value=`lua -e "print(os.time()+$new_preferred_life)"`
+        life="$life\"pref\":$value,"
+    fi
+    if [ ! "x$new_max_life" = x ]
+    then
+        value=`lua -e "print(os.time()+$new_max_life)"`
+        life="$life\"valid\":$value,"
+    fi
+
     # Just manipulate BIRD state
 
-    ARG="pd.$interface+={\"prefix\":\"${new_ip6_prefix}\",\"dns\":\"${new_dhcp6_name_servers}\",\"dns_search\":\"${new_dhcp6_domain_search}\",\"pclass\":\"${new_dhcp6_prefix_class}\"}"
+    ARG="pd.$interface+={$life\"prefix\":\"${new_ip6_prefix}\",\"dns\":\"${new_dhcp6_name_servers}\",\"dns_search\":\"${new_dhcp6_domain_search}\",\"pclass\":\"${new_dhcp6_prefix_class}\"}"
     #echo "calling skvtool $ARG" >> /tmp/use-pd.log
 
     # Remove old + then add new, in one atomic-ish transaction (hooray)
