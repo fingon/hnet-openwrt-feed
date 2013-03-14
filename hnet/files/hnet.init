@@ -10,81 +10,104 @@ START=90
 SERVICE_DAEMONIZE=1
 SERVICE_WRITE_PID=1
 
+DEBUG=0
+
+PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
+
 BIRD=/usr/sbin/bird6-elsa
 PM=/usr/share/lua/pm.lua
 MDNS=/usr/share/lua/mdns.lua
 
+if [ -d /hosthome ]
+then
+    # Always debug in NetKit topology
+    DEBUG=1
+
+    # And stow logs on user's filesystem
+    HOSTNAME=`cat /proc/sys/kernel/hostname`
+    # Netkit debugging log storage elsewhere than the virtual machine
+    LOGDIR=/hostlab/logs/$HOSTNAME
+    mkdir -p $LOGDIR
+else
+    LOGDIR=/tmp
+fi
+
 start() {
-        # Needed by BIRD
-        mkdir -p /usr/local/var/run
+    # Needed by BIRD
+    mkdir -p /usr/local/var/run
 
-        # Needed by dhcpd's we trigger
-        mkdir -p /var/db
+    # Needed by dhcpd's we trigger
+    mkdir -p /var/db
 
-        # Create dummy lease files
-        touch /var/db/dhcpd.leases
-        touch /var/db/dhcpd6.leases
+    # Create dummy lease files
+    touch /var/db/dhcpd.leases
+    touch /var/db/dhcpd6.leases
 
-        # Stop+disable some services that conflict with us
-        for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall
-        do
-                if [ -f /etc/init.d/$SERVICE ]
-                then
-                        /etc/init.d/$SERVICE stop
-                        # This would be better, but more radical
-                        # choice. For the time being, we just do the
-                        # stop, and hope it's enough (although it
-                        # makes booting device up somewhat less
-                        # efficient than it could be)
-                        #/etc/init.d/$SERVICE disable
-                fi
-        done
-
-        if [ -d /hostlab ]
+    # Stop+disable some services that conflict with us
+    for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall
+    do
+        if [ -f /etc/init.d/$SERVICE ]
         then
-            HOSTNAME=`cat /proc/sys/kernel/hostname`
-            # Netkit debugging log storage elsewhere than the virtual machine
-            LOGDIR=/hostlab/logs/$HOSTNAME
-            mkdir -p $LOGDIR
+            /etc/init.d/$SERVICE stop
 
-            # First, start pm
-            ENABLE_MST_DEBUG=1 $PM $PM_ARGS 2>&1 > $LOGDIR/pm.log &
+            # This would be better, but more radical choice. For the
+            # time being, we just do the stop, and hope it's enough
+            # (although it makes booting device up somewhat less
+            # efficient than it could be)
 
-            # Then wait a second (for it to get the skv port up)
-            sleep 1
-
-            # Then MDNS
-            ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
-
-            # Rewrite the configuration file to store to logfile
-            # on simulated UML host as well
-            CONF=/etc/bird6.conf
-            RCONF=/tmp/bird6.conf
-
-            egrep -v '^log syslog all' $CONF > $RCONF
-            echo "log \"$LOGDIR/bird6.log\" all;" >> $RCONF
-
-            # And then fire up the BIRD
-            ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
-        else
-	    service_start $BIRD -d
-	    service_start $PM $PM_ARGS 
-	    service_start $MDNS
+            #/etc/init.d/$SERVICE disable
         fi
+    done
+
+    if [ -f $PM_EXTRA_ARGS_FILENAME ]
+    then
+        PM_EXTRA_ARGS=`cat $PM_EXTRA_ARGS_FILENAME`
+    fi
+
+    CONF=/etc/bird6.conf
+    if [ "x$DEBUG" = "x1" ]
+    then
+        # First, start pm
+        
+        # PM_EXTRA_ARGS (from PM_EXTRA_ARGS_FILENAME)
+
+        ENABLE_MST_DEBUG=1 $PM $PM_ARGS $PM_EXTRA_ARGS 2>&1 > $LOGDIR/pm.log &
+
+        # Then wait a second (for it to get the skv port up)
+        sleep 1
+
+        # Then MDNS
+        ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
+
+        # Rewrite the configuration file to store to logfile
+        # on simulated UML host as well
+        RCONF=/tmp/bird6.conf
+
+        egrep -v '^log syslog all' $CONF > $RCONF
+        echo "log \"$LOGDIR/bird6.log\" all;" >> $RCONF
+
+        # And then fire up the BIRD
+        ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
+    else
+	service_start $PM $PM_ARGS $PM_EXTRA_ARGS
+        sleep 1
+	service_start $MDNS
+	service_start $BIRD -d -c $CONF
+    fi
 }
 
 stop() {
-        if [ -d /hostlab ]
-        then
-            # Netkit case - just use killall
-            # (And _hope_ nobody else has lua process name, smirk)
-            killall bird6-elsa
-            killall lua
-        else
-	    service_stop $MDNS
-	    service_stop $PM
-	    service_stop $BIRD
-        fi
+    if [ "x$DEBUG" = "x1" ]
+    then
+        # If debugging, killing is enough
+        # (And _hope_ nobody else has lua process name, smirk)
+        killall bird6-elsa
+        killall lua
+    else
+	service_stop $MDNS
+	service_stop $PM
+	service_stop $BIRD
+    fi
 }
 
 reload() {
