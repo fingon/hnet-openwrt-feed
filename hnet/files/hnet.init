@@ -77,7 +77,7 @@ start() {
         sleep 1
 
         # Then MDNS
-        ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
+        #ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
 
         # Rewrite the configuration file to store to logfile
         # on simulated UML host as well
@@ -91,7 +91,7 @@ start() {
     else
 	service_start $PM $PM_ARGS $PM_EXTRA_ARGS
         sleep 1
-	service_start $MDNS
+	#service_start $MDNS
 	service_start $BIRD -d -c $CONF
     fi
 }
@@ -104,7 +104,7 @@ stop() {
         killall bird6-elsa
         killall lua
     else
-	service_stop $MDNS
+	#service_stop $MDNS
 	service_stop $PM
 	service_stop $BIRD
     fi
