@@ -3,7 +3,10 @@
 # Copyright (C) 2012 cisco Systems, Inc.
 
 # Disable ULA generation + use fake DHCPv6d for prefix class support
-PM_ARGS="--disable_ula -f"
+#PM_ARGS="--disable_ula -f"
+
+# Disable ULA generation + use dnsmasq 
+PM_ARGS="--disable_ula -m"
 
 START=90
 

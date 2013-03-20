@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=e01ddae339154681c534b8b2efae796cdc45428d
-PKG_VERSION:=2013-03-15-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=b9e463c62aa6562eec4d5382d5815eb34fba9630
+PKG_VERSION:=2013-03-20-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://github.com/fingon/hnet-core.git
@@ -32,6 +32,8 @@ define Package/hnet
   DEPENDS+=+isc-dhcp-client-ipv6
   # Require rdisc6 just so that network gets set up bit faster
   DEPENDS+=+rdisc6
+
+  DEPENDS+=+hnet-dnsmasq-dhcpv6
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
