@@ -21,6 +21,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=git://github.com/fingon/hnet-dnsmasq.git
 PKG_SOURCE_PROTO:=git
+PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
