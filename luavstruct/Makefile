@@ -1,12 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luavstruct
-PKG_SOURCE_VERSION:=3e7a62ab9e07036ade26da49c716e9482f72d1e1
-PKG_VERSION:=2012-11-07-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=ef7cbb1744132822286148ce29711415b58c4128
+PKG_VERSION:=2013-04-10-ef7cbb1744132822286148ce29711415b58c4128
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=https://github.com/LuaDist/vstruct.git
-# or https://github.com/ToxicFrog/vstruct.git ?
+PKG_SOURCE_URL:=https://github.com/ToxicFrog/vstruct.git
 PKG_SOURCE_PROTO:=git
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
