@@ -1,12 +1,18 @@
+#
+# Copyright (C) 2012-2013 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=5658d21ed0c75de0436207d093487f25d0ce3d52
-PKG_VERSION:=2013-04-10-5658d21ed0c75de0436207d093487f25d0ce3d52
-PKG_RELEASE:=1
+PKG_VERSION:=2013-04-10
+PKG_RELEASE:=$(PKG_SOURCE_VERSION)
 
-PKG_SOURCE_URL:=https://github.com/fingon/hnet-core.git
 PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=git://github.com/fingon/hnet-core.git
+PKG_SOURCE_VERSION:=5658d21ed0c75de0436207d093487f25d0ce3d52
 PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -67,12 +73,10 @@ define Package/hnet/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua
 	$(CP) $(PKG_BUILD_DIR)/thirdparty/*.lua $(1)/usr/lib/lua
 	$(INSTALL_DIR) $(1)/usr/share/hnet
-	$(CP) $(PKG_BUILD_DIR)/openwrt/*.sh $(1)/usr/share/hnet
-	chmod a+x $(1)/usr/share/hnet/*.sh
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/*.sh $(1)/usr/share/hnet
 	$(INSTALL_DIR) $(1)/sbin
-	$(CP) files/dhclient-script $(1)/sbin
+	$(INSTALL_BIN) files/dhclient-script $(1)/sbin
 	$(INSTALL_DIR) $(1)/etc/dhcp/dhclient-exit-hooks.d
-	chmod a+x $(1)/sbin/dhclient-script
 	$(CP) files/dhclient-exit-hooks  $(1)/etc
 	$(CP) files/dhclient.conf $(1)/etc/dhcp/dhclient6-hnet.conf
 	$(CP) files/use-pd  $(1)/etc/dhcp/dhclient-exit-hooks.d
