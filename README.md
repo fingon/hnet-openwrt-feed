@@ -25,7 +25,7 @@ We make the assumption that the reader is moderately familiar with
 
 Get the source tree of AA:
 
-    git clone git://nbd.name/attitude_adjustment.git
+    git clone git://git.openwrt.org/12.09/openwrt.git
 
 Add following line to feeds.conf:
 
