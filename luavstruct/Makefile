@@ -1,14 +1,20 @@
+#
+# Copyright (C) 2013 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luavstruct
-PKG_SOURCE_VERSION:=ef7cbb1744132822286148ce29711415b58c4128
-PKG_VERSION:=2013-04-10-ef7cbb1744132822286148ce29711415b58c4128
-PKG_RELEASE:=1
+PKG_VERSION:=2013-04-10
+PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
-PKG_SOURCE_URL:=https://github.com/ToxicFrog/vstruct.git
 PKG_SOURCE_PROTO:=git
-
+PKG_SOURCE_URL:=git://github.com/ToxicFrog/vstruct.git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_SOURCE_VERSION:=ef7cbb1744132822286148ce29711415b58c4128
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
