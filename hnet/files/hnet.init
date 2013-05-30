@@ -20,6 +20,7 @@ PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
 BIRD=/usr/sbin/bird6-elsa
 PM=/usr/share/lua/pm.lua
 MDNS=/usr/share/lua/mdns.lua
+HP=/usr/share/lua/hp.lua
 
 if [ -d /hosthome ]
 then
@@ -82,6 +83,9 @@ start() {
         # Then MDNS
         #ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
 
+        # Then hybrid proxy
+        #ENABLE_MST_DEBUG=1 $HP 2>&1 > $LOGDIR/hp.log &
+
         # Rewrite the configuration file to store to logfile
         # on simulated UML host as well
         RCONF=/tmp/bird6.conf
@@ -95,6 +99,7 @@ start() {
 	service_start $PM $PM_ARGS $PM_EXTRA_ARGS
         sleep 1
 	#service_start $MDNS
+	service_start $HP
 	service_start $BIRD -d -c $CONF
     fi
 }
