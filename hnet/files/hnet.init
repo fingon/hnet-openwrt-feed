@@ -8,6 +8,12 @@
 # Disable ULA generation + use dnsmasq 
 PM_ARGS="--disable_ula -m"
 
+# Use dnsmasq, no ULA, use hybrid proxy
+PM_ARGS="--disable_ula -m -h"
+
+# Hybrid proxy should use OSPF..
+HP_ARGS="--ospf"
+
 START=90
 
 SERVICE_DAEMONIZE=1
@@ -84,7 +90,7 @@ start() {
         #ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
 
         # Then hybrid proxy
-        #ENABLE_MST_DEBUG=1 $HP 2>&1 > $LOGDIR/hp.log &
+        ENABLE_MST_DEBUG=1 $HP $HP_ARGS 2>&1 > $LOGDIR/hp.log &
 
         # Rewrite the configuration file to store to logfile
         # on simulated UML host as well
@@ -99,7 +105,7 @@ start() {
 	service_start $PM $PM_ARGS $PM_EXTRA_ARGS
         sleep 1
 	#service_start $MDNS
-	service_start $HP
+	service_start $HP $HP_ARGS
 	service_start $BIRD -d -c $CONF
     fi
 }
