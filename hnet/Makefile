@@ -79,7 +79,6 @@ define Package/hnet/install
 	$(INSTALL_DIR) $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/dhclient-exit-hooks  $(1)/etc
 	$(CP) files/dhclient.conf $(1)/etc/dhcp/dhclient6-hnet.conf
-	$(CP) files/use-pd  $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/use-v4  $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/bird6.conf  $(1)/etc
 	$(INSTALL_DIR) $(1)/etc/init.d
