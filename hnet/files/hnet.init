@@ -86,9 +86,6 @@ start() {
         # Then wait a second (for it to get the skv port up)
         sleep 1
 
-        # Then MDNS
-        #ENABLE_MST_DEBUG=1 $MDNS 2>&1 > $LOGDIR/mdns.log &
-
         # Then hybrid proxy
         ENABLE_MST_DEBUG=1 $HP $HP_ARGS 2>&1 > $LOGDIR/hp.log &
 
@@ -104,7 +101,6 @@ start() {
     else
 	service_start $PM $PM_ARGS $PM_EXTRA_ARGS
         sleep 1
-	#service_start $MDNS
 	service_start $HP $HP_ARGS
 	service_start $BIRD -d -c $CONF
     fi
@@ -118,7 +114,6 @@ stop() {
         killall bird6-elsa
         killall lua
     else
-	#service_stop $MDNS
 	service_stop $PM
 	service_stop $BIRD
     fi
