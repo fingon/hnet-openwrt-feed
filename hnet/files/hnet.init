@@ -54,7 +54,7 @@ start() {
     touch /var/db/dhcpd6.leases
 
     # Stop+disable some services that conflict with us
-    for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall
+    for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall netifd
     do
         if [ -f /etc/init.d/$SERVICE ]
         then
@@ -68,6 +68,10 @@ start() {
             #/etc/init.d/$SERVICE disable
         fi
     done
+
+    # Reset the ip -6 rules to defaults (needed since some AA version)
+    ip -6 rule flush
+    ip -6 rule add pref 32768 lookup main
 
     if [ -f $PM_EXTRA_ARGS_FILENAME ]
     then
