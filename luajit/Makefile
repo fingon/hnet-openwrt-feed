@@ -45,10 +45,19 @@ define Package/luajit/description
  Other platforms will be supported in the future, based on user demand and sponsoring.
 endef
 
+# Have to use same #bits on _host_ compiler, as on the _target_ =>
+# here we detect target's bit-width (this should be available from
+# somewhere in OWRT infra, I'm sure)
+ifneq ($(findstring $(ARCH) , mips64 x86_64 ),)
+TARGET_BITS:=-m64
+else
+TARGET_BITS:=-m32
+endif
+
 define Build/Compile
 #	$(call Build/Compile/Default, install)
-	$(MAKE) -C $(PKG_BUILD_DIR) HOST_CC="gcc -m32" CROSS=$(TARGET_CROSS) TARGET_CFLAGS="$(TARGET_CFLAGS)" HOST_CFLAGS="$(HOST_CFLAGS)" TARGET_LDFLAGS="$(TARGET_LDFLAGS)" HOST_LDFLAGS="$(HOST_LDFLAGS)" DESTDIR="$(PKG_INSTALL_DIR)" PREFIX=/usr INSTALL_LMOD="/usr/share/lua" INSTALL_CMOD="/usr/share/lua" amalg
-	$(MAKE) -C $(PKG_BUILD_DIR) HOST_CC="gcc -m32" CROSS=$(TARGET_CROSS) TARGET_CFLAGS="$(TARGET_CFLAGS)" HOST_CFLAGS="$(HOST_CFLAGS)" TARGET_LDFLAGS="$(TARGET_LDFLAGS)" HOST_LDFLAGS="$(HOST_LDFLAGS)" DESTDIR="$(PKG_INSTALL_DIR)" PREFIX=/usr INSTALL_LMOD="/usr/share/lua" INSTALL_CMOD="/usr/share/lua" install
+	$(MAKE) -C $(PKG_BUILD_DIR) HOST_CC="$(HOSTCC) $(TARGET_BITS)" CROSS=$(TARGET_CROSS) TARGET_CFLAGS="$(TARGET_CFLAGS)" HOST_CFLAGS="$(HOST_CFLAGS)" TARGET_LDFLAGS="$(TARGET_LDFLAGS)" HOST_LDFLAGS="$(HOST_LDFLAGS)" DESTDIR="$(PKG_INSTALL_DIR)" PREFIX=/usr INSTALL_LMOD="/usr/share/lua" INSTALL_CMOD="/usr/share/lua" amalg
+	$(MAKE) -C $(PKG_BUILD_DIR) HOST_CC="$(HOSTCC) $(TARGET_BITS)" CROSS=$(TARGET_CROSS) TARGET_CFLAGS="$(TARGET_CFLAGS)" HOST_CFLAGS="$(HOST_CFLAGS)" TARGET_LDFLAGS="$(TARGET_LDFLAGS)" HOST_LDFLAGS="$(HOST_LDFLAGS)" DESTDIR="$(PKG_INSTALL_DIR)" PREFIX=/usr INSTALL_LMOD="/usr/share/lua" INSTALL_CMOD="/usr/share/lua" install
 endef
 
 define Build/InstallDev
