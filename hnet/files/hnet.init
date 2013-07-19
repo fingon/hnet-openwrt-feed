@@ -104,13 +104,13 @@ start() {
         
         # PM_EXTRA_ARGS (from PM_EXTRA_ARGS_FILENAME)
 
-        ENABLE_MST_DEBUG=1 $LUA $PM $PM_ARGS $PM_EXTRA_ARGS 2>&1 > $LOGDIR/pm.log &
+        ENABLE_MST_DEBUG=1 $LUA $PM $PM_ARGS $PM_EXTRA_ARGS > $LOGDIR/pm.log 2>&1 &
 
         # Then wait a second (for it to get the skv port up)
         sleep 1
 
         # Then hybrid proxy
-        ENABLE_MST_DEBUG=1 $LUA $HP $HP_ARGS 2>&1 > $LOGDIR/hp.log &
+        ENABLE_MST_DEBUG=1 $LUA $HP $HP_ARGS > $LOGDIR/hp.log 2>&1 &
 
         # Rewrite the configuration file to store to logfile
         # on simulated UML host as well
