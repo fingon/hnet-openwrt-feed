@@ -2,14 +2,22 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
-# Disable ULA generation + use fake DHCPv6d for prefix class support
-#PM_ARGS="--disable_ula -f"
+# XXX - make these UCI options
 
-# Disable ULA generation + use dnsmasq 
-PM_ARGS="--disable_ula -m"
+# Disable ULA altogether
+#PM_ULA_MODE="--disable_ula"
+# Only if no globals present
+PM_ULA_MODE="--disable_always_ula"
+# Always ULA
+#PM_ULA_MODE=""
 
-# Use dnsmasq, no ULA, use hybrid proxy
-PM_ARGS="--disable_ula -m -h"
+# Use hybrid proxy
+PM_HP_MODE="-h"
+# .. or not
+#PM_HP_MODE=""
+
+# --openwrt = provision netifd
+PM_ARGS="$PM_ULA_MODE $PM_HP_MODE --openwrt"
 
 # Hybrid proxy should use OSPF..
 HP_ARGS="--ospf"
@@ -71,26 +79,6 @@ start() {
     # Create dummy lease files
     touch /var/db/dhcpd.leases
     touch /var/db/dhcpd6.leases
-
-    # Stop+disable some services that conflict with us
-    for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall netifd
-    do
-        if [ -f /etc/init.d/$SERVICE ]
-        then
-            /etc/init.d/$SERVICE stop
-
-            # This would be better, but more radical choice. For the
-            # time being, we just do the stop, and hope it's enough
-            # (although it makes booting device up somewhat less
-            # efficient than it could be)
-
-            #/etc/init.d/$SERVICE disable
-        fi
-    done
-
-    # Reset the ip -6 rules to defaults (needed since some AA version)
-    ip -6 rule flush
-    ip -6 rule add pref 32768 lookup main
 
     if [ -f $PM_EXTRA_ARGS_FILENAME ]
     then
