@@ -2,6 +2,9 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
+USE_HNET_IN_UML=1
+HNET=/hosthome/hnet
+
 # XXX - make these UCI options
 
 # Disable ULA altogether
@@ -51,10 +54,8 @@ DEBUG=0
 PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
 
 BIRD=/usr/sbin/bird6-elsa
-PM=/usr/share/lua/pm.lua
-MDNS=/usr/share/lua/mdns.lua
-HP=/usr/share/lua/hp.lua
 
+LUADIR=/usr/share/lua
 if [ -d /hosthome ]
 then
     # Always debug in NetKit topology
@@ -65,9 +66,22 @@ then
     # Netkit debugging log storage elsewhere than the virtual machine
     LOGDIR=/hostlab/logs/$HOSTNAME
     mkdir -p $LOGDIR
+
+    if [ "x$USE_HNET_IN_UML" = "x1" -a -d $HNET ]
+    then
+        BUILD=$HNET/build
+        CORE=$HNET/component/core
+        LUADIR=$CORE
+        BUILDLUA=$BUILD/share/lua/5.1
+        export LUA_PATH="$CORE/?.lua;$CORE/thirdparty/?.lua;$BUILDLUA/?.lua;$BUILDLUA/?/init.lua;;"
+        LUA=lua
+    fi
 else
     LOGDIR=/tmp
 fi
+PM=$LUADIR/pm.lua
+MDNS=$LUADIR/mdns.lua
+HP=$LUADIR/hp.lua
 
 start() {
     # Needed by BIRD
