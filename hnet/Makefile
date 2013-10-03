@@ -46,7 +46,12 @@ define Package/hnet
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
-  DEPENDS+=+@USE_EGLIBC
+  # sbyx said he'd take care of it ~20131001
+
+  # UML kernel doesn't seem to work either for some reason with uclibc
+  # (But guess it doesn't really force us to have strict dependency,
+  # but instead just build UML builds with eglibc).
+  #DEPENDS+=+@USE_EGLIBC
 
   # We're also IPv6-only
   DEPENDS+=+@IPV6
@@ -83,6 +88,8 @@ define Package/hnet/install
 	$(CP) files/bird6.conf  $(1)/etc
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) files/hnet.init $(1)/etc/init.d/hnet
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) files/disable-hnet $(1)/etc/uci-defaults/hnet
 endef
