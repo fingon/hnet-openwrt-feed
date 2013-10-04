@@ -86,6 +86,8 @@ define Package/hnet/install
 	$(CP) files/dhclient.conf $(1)/etc/dhcp/dhclient6-hnet.conf
 	$(CP) files/use-v4  $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/bird6.conf  $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_BIN) files/hotplug.sh $(1)/etc/hotplug.d/iface/90-hnet
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) files/hnet.init $(1)/etc/init.d/hnet
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
