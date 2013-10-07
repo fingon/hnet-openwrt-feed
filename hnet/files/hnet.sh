@@ -37,6 +37,7 @@ proto_hnet_setup() {
     #XXX - these should work, but they don't - wait for sbyx's patch
     #json_add_string noslaaconly 1
     #json_add_string reqaddress none
+    json_add_string forceprefix 1
     json_close_object
     ubus call network add_dynamic "$(json_dump)"
 }
