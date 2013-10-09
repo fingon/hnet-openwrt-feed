@@ -2,7 +2,7 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
-USE_HNET_IN_UML=1
+#USE_HNET_IN_UML=1
 HNET=/hosthome/hnet
 
 # XXX - make these UCI options
