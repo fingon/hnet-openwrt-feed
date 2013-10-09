@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=fbb912bf81fe40cf99ddb18ccde2820f05c9ac83
-PKG_VERSION:=2013-10-08-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=042c4522b66f0dc0c80fa259a8e1b9a8b9a2b0ac
+PKG_VERSION:=2013-10-09-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -85,7 +85,6 @@ define Package/hnet/install
 	$(CP) files/dhclient-exit-hooks  $(1)/etc
 	$(CP) files/dhclient.conf $(1)/etc/dhcp/dhclient6-hnet.conf
 	$(CP) files/use-v4  $(1)/etc/dhcp/dhclient-exit-hooks.d
-	$(CP) files/bird6.conf  $(1)/etc
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) files/hotplug.sh $(1)/etc/hotplug.d/iface/90-hnet
 	$(INSTALL_DIR) $(1)/etc/init.d

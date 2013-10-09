@@ -53,8 +53,6 @@ DEBUG=0
 
 PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
 
-BIRD=/usr/sbin/bird6-elsa
-
 LUADIR=/usr/share/lua
 if [ -d /hosthome ]
 then
@@ -99,7 +97,6 @@ start() {
         PM_EXTRA_ARGS=`cat $PM_EXTRA_ARGS_FILENAME`
     fi
 
-    CONF=/etc/bird6.conf
     if [ "x$DEBUG" = "x1" ]
     then
         # First, start pm
@@ -113,21 +110,9 @@ start() {
 
         # Then hybrid proxy
         ENABLE_MST_DEBUG=1 $LUA $HP $HP_ARGS > $LOGDIR/hp.log 2>&1 &
-
-        # Rewrite the configuration file to store to logfile
-        # on simulated UML host as well
-        RCONF=/tmp/bird6.conf
-
-        egrep -v '^log syslog all' $CONF > $RCONF
-        echo "log \"$LOGDIR/bird6.log\" all;" >> $RCONF
-
-        # And then fire up the BIRD
-        ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
     else
 	service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
-        sleep 1
 	service_start $LUA $HP $HP_ARGS
-	service_start $BIRD -d -c $CONF
     fi
 }
 
@@ -136,14 +121,15 @@ stop() {
     then
         # If debugging, killing is enough
         # (And _hope_ nobody else has lua process name, smirk)
-        killall bird6-elsa
         killall $LUA
     else
         # XXX - does service_stop even _work_ with $LUA prefixed commands?
 	service_stop $LUA $HP
 	service_stop $LUA $PM
-	service_stop $BIRD
     fi
+
+    # Stop the bird6 if it was running too
+    /usr/share/hnet/bird6_handler.sh stop
 }
 
 reload() {
