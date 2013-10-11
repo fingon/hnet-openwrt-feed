@@ -128,7 +128,8 @@ stop() {
 	service_stop $LUA $PM
     fi
 
-    # Stop the bird6 if it was running too
+    # Stop the bird4/bird6 they were running too
+    /usr/share/hnet/bird4_handler.sh stop
     /usr/share/hnet/bird6_handler.sh stop
 }
 
