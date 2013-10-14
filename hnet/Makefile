@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=117e1e7703311268da4456a2e0bba785a540069c
-PKG_VERSION:=2013-10-11-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=26961ab9cca51e03dc0c0d4ec221625a71d5e892
+PKG_VERSION:=2013-10-14-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -30,19 +30,6 @@ define Package/hnet
   # These are sometime replaceable ones, but in principle they are helpful too
   # (Used to provide services / get configuration)
   DEPENDS+=+bird4
-  # These we should get rid of at some point (replace servers with
-  # dnsmasq, and client's with something - busybox?)
-  #DEPENDS+=+radvd
-  #DEPENDS+=+isc-dhcp-server-ipv4
-  #DEPENDS+=+isc-dhcp-server-ipv6
-  DEPENDS+=+isc-dhcp-client-ipv4
-  #DEPENDS+=+isc-dhcp-client-ipv6
-
-  # Require rdisc6 just so that network gets set up bit faster
-  DEPENDS+=+rdisc6
-
-  DEPENDS+=+hnet-dnsmasq-dhcpv6
-  DEPENDS+=+hnet-odhcp6c
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
