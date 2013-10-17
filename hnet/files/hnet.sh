@@ -28,11 +28,11 @@ proto_hnet_setup() {
     json_add_string ifname "@${interface}"
 
     # vendor specific option (125)
-    # Steven Barth's enterprise number (30462)
+    # 4b - Steven Barth's enterprise number (30462)
     # data-len1 (2)
     # subopt-code (1)
     # subopt-len (0)
-    json_add_string customopts "0x7d:76fe020100"
+    json_add_string sendopts "0x7d:000076fe020100"
 
     json_add_string proto dhcp
     json_close_object
