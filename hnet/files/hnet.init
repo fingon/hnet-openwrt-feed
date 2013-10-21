@@ -16,7 +16,7 @@ HP_ARGS="--ospf"
 
 # Choose your .. Lua. ;)
 # No prefix -> use the binary as-is and hope it has #! .. 
-LUA=
+LUA=/usr/bin/lua
 
 # Use luajit alpha if available
 LUAJIT=luajit-2.1.0-alpha
@@ -37,6 +37,7 @@ START=90
 
 SERVICE_DAEMONIZE=1
 SERVICE_WRITE_PID=1
+
 
 DEBUG=0
 
@@ -122,10 +123,10 @@ start() {
         # And then fire up the BIRD
         ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
     else
-	service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
+	SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
         sleep 1
-	service_start $LUA $HP $HP_ARGS
-	service_start $BIRD -d -c $CONF
+	SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
+	SERVICE_NAME="" service_start $BIRD -d -c $CONF
     fi
 }
 
@@ -138,9 +139,9 @@ stop() {
         killall $LUA
     else
         # XXX - does service_stop even _work_ with $LUA prefixed commands?
-	service_stop $LUA $HP
-	service_stop $LUA $PM
-	service_stop $BIRD
+	SERVICE_NAME=hp service_stop $LUA $HP
+	SERVICE_NAME=pm service_stop $LUA $PM
+	SERVICE_NAME="" service_stop $BIRD
     fi
 }
 
