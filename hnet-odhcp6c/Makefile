@@ -8,17 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet-odhcp6c
-PKG_SOURCE_VERSION:=e3e24645a00ff0aea4760265840bde21baeab3f1
+PKG_SOURCE_VERSION:=e23448ff8edc66f1da4fcb2b4066a02d6a54306f
 PKG_VERSION:=2013-08-01-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=git://github.com/fingon/hnet-odhcp6c.git
+PKG_SOURCE_URL:=git://github.com/sbyx/odhcp6c.git
 PKG_SOURCE_PROTO:=git
-PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
+PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
+CMAKE_OPTIONS = -DEXT_PREFIX_CLASS=200
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
