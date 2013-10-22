@@ -42,10 +42,13 @@ proto_hnet_setup() {
     json_add_string name "${interface}_6"
     json_add_string ifname "@${interface}"
     json_add_string proto dhcpv6
-    #XXX - these should work, but they don't - wait for sbyx's patch
-    #json_add_string noslaaconly 1
-    #json_add_string reqaddress none
+
+    # Require PD, not only NA/SLAAC
     json_add_string forceprefix 1
+
+    # Disable automatic netifd-level prefix delegation for this interface
+    json_add_boolean delegate 0
+
     json_close_object
     ubus call network add_dynamic "$(json_dump)"
 }
