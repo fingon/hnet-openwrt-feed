@@ -50,7 +50,8 @@ SERVICE_DAEMONIZE=1
 SERVICE_WRITE_PID=1
 
 
-DEBUG=0
+DEBUG=
+#DEBUG=1
 
 PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
 
@@ -98,36 +99,13 @@ start() {
         PM_EXTRA_ARGS=`cat $PM_EXTRA_ARGS_FILENAME`
     fi
 
-    if [ "x$DEBUG" = "x1" ]
-    then
-        # First, start pm
-        
-        # PM_EXTRA_ARGS (from PM_EXTRA_ARGS_FILENAME)
-
-        ENABLE_MST_DEBUG=1 $LUA $PM $PM_ARGS $PM_EXTRA_ARGS > $LOGDIR/pm.log 2>&1 &
-
-        # Then wait a second (for it to get the skv port up)
-        sleep 1
-
-        # Then hybrid proxy
-        ENABLE_MST_DEBUG=1 $LUA $HP $HP_ARGS > $LOGDIR/hp.log 2>&1 &
-    else
-	SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
-	SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
-    fi
+    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
+    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
 }
 
 stop() {
-    if [ "x$DEBUG" = "x1" ]
-    then
-        # If debugging, killing is enough
-        # (And _hope_ nobody else has lua process name, smirk)
-        killall $LUA
-    else
-        # XXX - does service_stop even _work_ with $LUA prefixed commands?
-	SERVICE_NAME=hp service_stop $LUA $HP
-	SERVICE_NAME=pm service_stop $LUA $PM
-    fi
+    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=hp service_stop $LUA $HP
+    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=pm service_stop $LUA $PM
 
     # Stop the bird4/bird6 they were running too
     /usr/share/hnet/bird4_handler.sh stop
