@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=4cccec72e854675e3b39f138c77fe7efd4c0ded6
-PKG_VERSION:=2013-10-19-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=4dabd54ca8fe93df75f56c86151a928b3ea58ad9
+PKG_VERSION:=2013-10-22-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -59,6 +59,7 @@ endef
 define Package/hnet/install
 	$(INSTALL_DIR) $(1)/usr/share/lua
 	$(CP) $(PKG_BUILD_DIR)/*.lua $(1)/usr/share/lua
+	$(CP) $(PKG_BUILD_DIR)/stress/*_raw.lua $(1)/usr/share/lua
 	$(INSTALL_DIR) $(1)/usr/sbin
 	ln -s /usr/share/lua/skvtool.lua $(1)/usr/sbin/skvtool
 	chmod a+x $(1)/usr/share/lua/{pm,hp,skvtool}.lua
