@@ -142,6 +142,7 @@ stop() {
 	SERVICE_NAME=hp service_stop $LUA $HP
 	SERVICE_NAME=pm service_stop $LUA $PM
 	SERVICE_NAME="" service_stop $BIRD
+        /usr/share/hnet/bird4_handler.sh stop
     fi
 }
 
