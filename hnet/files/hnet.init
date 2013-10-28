@@ -56,6 +56,9 @@ DEBUG=
 PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
 
 LUADIR=/usr/share/lua
+DEBUG_HP=
+DEBUG_PM=
+LOGDIR=/tmp
 if [ -d /hosthome ]
 then
     # Always debug in NetKit topology
@@ -65,8 +68,9 @@ then
     HOSTNAME=`cat /proc/sys/kernel/hostname`
     # Netkit debugging log storage elsewhere than the virtual machine
     LOGDIR=/hostlab/logs/$HOSTNAME
-    mkdir -p $LOGDIR
 
+    # If desired, use just $HNET/component/core for Lua, instead of
+    # whatever's built into the package
     if [ "x$USE_HNET_IN_UML" = "x1" -a -d $HNET ]
     then
         BUILD=$HNET/build
@@ -76,9 +80,14 @@ then
         export LUA_PATH="$CORE/?.lua;$CORE/thirdparty/?.lua;$BUILDLUA/?.lua;$BUILDLUA/?/init.lua;;"
         LUA=lua
     fi
-else
-    LOGDIR=/tmp
 fi
+if [ ! "x$DEBUG" = "x" ]
+then
+    mkdir -p $LOGDIR
+    PM_ARGS="$PM_ARGS --debug $LOGDIR/hp.log"
+    HP_ARGS="$HP_ARGS --debug $LOGDIR/pm.log"
+fi
+
 PM=$LUADIR/pm.lua
 MDNS=$LUADIR/mdns.lua
 HP=$LUADIR/hp.lua
@@ -99,13 +108,13 @@ start() {
         PM_EXTRA_ARGS=`cat $PM_EXTRA_ARGS_FILENAME`
     fi
 
-    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
-    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
+    SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
+    SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
 }
 
 stop() {
-    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=hp service_stop $LUA $HP
-    ENABLE_MST_DEBUG=$DEBUG SERVICE_NAME=pm service_stop $LUA $PM
+    SERVICE_NAME=hp service_stop $LUA $HP
+    SERVICE_NAME=pm service_stop $LUA $PM
 
     # Stop the bird4/bird6 they were running too
     /usr/share/hnet/bird4_handler.sh stop
