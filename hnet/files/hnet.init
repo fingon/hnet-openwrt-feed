@@ -2,7 +2,9 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
-#USE_HNET_IN_UML=1
+# Do we use hnet from UML home directory if available?
+USE_HNET_IN_UML=1
+
 HNET=/hosthome/hnet
 
 # XXX - make these UCI options
@@ -78,7 +80,7 @@ then
         LUADIR=$CORE
         BUILDLUA=$BUILD/share/lua/5.1
         export LUA_PATH="$CORE/?.lua;$CORE/thirdparty/?.lua;$BUILDLUA/?.lua;$BUILDLUA/?/init.lua;;"
-        LUA=lua
+        #LUA=lua
     fi
 fi
 if [ ! "x$DEBUG" = "x" ]
