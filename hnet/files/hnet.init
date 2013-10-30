@@ -5,6 +5,10 @@
 # Do we use hnet from UML home directory if available?
 USE_HNET_IN_UML=1
 
+# Do we always debug in UML?
+ALWAYS_DEBUG_IN_UML=
+ALWAYS_DEBUG_IN_UML=1
+
 HNET=/hosthome/hnet
 
 # XXX - make these UCI options
@@ -61,10 +65,13 @@ LUADIR=/usr/share/lua
 DEBUG_HP=
 DEBUG_PM=
 LOGDIR=/tmp
+
 if [ -d /hosthome ]
 then
-    # Always debug in NetKit topology
-    DEBUG=1
+    if [ "x$DEBUG" = "x" ]
+    then
+        DEBUG=$ALWAYS_DEBUG_IN_UML
+    fi
 
     # And stow logs on user's filesystem
     HOSTNAME=`cat /proc/sys/kernel/hostname`
