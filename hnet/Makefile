@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=9e234a7e92e848a705b784301879155da8750098
-PKG_VERSION:=2013-10-30-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=7bb6bd8c7c94242e41d31ebc716a5ada46f6a92c
+PKG_VERSION:=2013-10-31-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -29,7 +29,7 @@ define Package/hnet
   DEPENDS:=+lua +ip +lualfs +hnet-luasocket +luavstruct +luamd5 +bird6-elsa
   # These are sometime replaceable ones, but in principle they are helpful too
   # (Used to provide services / get configuration)
-  DEPENDS+=+bird4
+  DEPENDS+=+bird4 odhcpd
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
