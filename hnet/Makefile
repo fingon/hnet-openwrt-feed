@@ -29,7 +29,7 @@ define Package/hnet
   DEPENDS:=+lua +ip +lualfs +hnet-luasocket +luavstruct +luamd5 +bird6-elsa
   # These are sometime replaceable ones, but in principle they are helpful too
   # (Used to provide services / get configuration)
-  DEPENDS+=+bird4 odhcpd
+  DEPENDS+=+bird4 +odhcpd
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
