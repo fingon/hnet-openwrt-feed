@@ -93,8 +93,8 @@ fi
 if [ ! "x$DEBUG" = "x" ]
 then
     mkdir -p $LOGDIR
-    PM_ARGS="$PM_ARGS --debug $LOGDIR/hp.log"
-    HP_ARGS="$HP_ARGS --debug $LOGDIR/pm.log"
+    PM_ARGS="$PM_ARGS --debug $LOGDIR/pm.log"
+    HP_ARGS="$HP_ARGS --debug $LOGDIR/hp.log"
 fi
 
 PM=$LUADIR/pm.lua
