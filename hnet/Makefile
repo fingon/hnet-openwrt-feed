@@ -81,8 +81,6 @@ define Package/hnet/install
 	$(INSTALL_BIN) files/hnet.init $(1)/etc/init.d/hnet
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
 	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) files/disable-hnet $(1)/etc/uci-defaults/hnet
 endef
 
 $(eval $(call BuildPackage,hnet))

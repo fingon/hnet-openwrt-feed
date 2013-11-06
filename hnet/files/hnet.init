@@ -2,6 +2,8 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
+START=90
+
 # Do we use hnet from UML home directory if available?
 USE_HNET_IN_UML=1
 
@@ -49,8 +51,6 @@ export LUA_PATH='/usr/lib/lua/?.lua;/usr/lib/lua/?/init.lua;/usr/share/lua/?.lua
 LUA=$LUAJIT
 fi
 
-
-START=90
 
 SERVICE_DAEMONIZE=1
 SERVICE_WRITE_PID=1
@@ -128,9 +128,4 @@ stop() {
     # Stop the bird4/bird6 they were running too
     /usr/share/hnet/bird4_handler.sh stop
     /usr/share/hnet/bird6_handler.sh stop
-}
-
-reload() {
-    stop
-    start
 }
