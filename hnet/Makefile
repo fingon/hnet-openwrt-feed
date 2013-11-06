@@ -31,7 +31,7 @@ define Package/hnet
   # (Used to provide services / get configuration)
   DEPENDS+=+bird4 +odhcpd
   # This is needed for interaction with OWRT
-  DEPENDS:=+libubus-lua
+  DEPENDS+=+libubus-lua
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
