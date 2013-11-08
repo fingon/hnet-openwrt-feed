@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
 PKG_SOURCE_VERSION:=473d8ce9fdfb27c89f14b066dec29ba34532f2fa
-PKG_VERSION:=2013-11-05-$(PKG_SOURCE_VERSION)
+PKG_VERSION:=2013-11-12-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -79,6 +79,8 @@ define Package/hnet/install
 	$(INSTALL_BIN) files/hotplug.sh $(1)/etc/hotplug.d/iface/90-hnet
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) files/hnet.init $(1)/etc/init.d/hnet
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) files/hnet.config $(1)/etc/config/hnet
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
 	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 endef

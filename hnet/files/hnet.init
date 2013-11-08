@@ -3,129 +3,48 @@
 # Copyright (C) 2012 cisco Systems, Inc.
 
 START=90
+STOP=10
 
-# Do we use hnet from UML home directory if available?
-USE_HNET_IN_UML=1
+USE_PROCD=1
+PROG=/usr/bin/lua
 
-# Do we always debug in UML?
-ALWAYS_DEBUG_IN_UML=
-ALWAYS_DEBUG_IN_UML=1
-
-HNET=/hosthome/hnet
-
-# XXX - make these UCI options
-
-# Disable ULA altogether
-#PM_ULA_MODE="--disable_ula"
-# Only if no globals present
-PM_ULA_MODE="--disable_always_ula"
-# Always ULA
-#PM_ULA_MODE=""
-
-# Use hybrid proxy
-PM_HP_MODE="-h"
-# .. or not
-#PM_HP_MODE=""
-
-# --openwrt = provision netifd
-PM_ARGS="$PM_ULA_MODE $PM_HP_MODE --openwrt"
-
-# Hybrid proxy should use OSPF..
-HP_ARGS="--ospf"
-
-# Choose your .. Lua. ;)
-# No prefix -> use the binary as-is and hope it has #! .. 
-LUA=/usr/bin/lua
-
-# Use luajit alpha if available
-LUAJIT=luajit-2.1.0-alpha
-if [ -f /usr/bin/$LUAJIT ]
-then
-# Override non-C Lua path; for some reason, the luajit-2.1.0-alpha we
-# build has different default path despite us providing a PREFIX for
-# it.
-export LUA_PATH='/usr/lib/lua/?.lua;/usr/lib/lua/?/init.lua;/usr/share/lua/?.lua'
-
-
-# Override Lua too (duh)
-LUA=$LUAJIT
-fi
-
-
-SERVICE_DAEMONIZE=1
-SERVICE_WRITE_PID=1
-
-
-DEBUG=
-#DEBUG=1
-
-PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
-
-LUADIR=/usr/share/lua
-DEBUG_HP=
-DEBUG_PM=
-LOGDIR=/tmp
-
-if [ -d /hosthome ]
-then
-    if [ "x$DEBUG" = "x" ]
-    then
-        DEBUG=$ALWAYS_DEBUG_IN_UML
-    fi
-
-    # And stow logs on user's filesystem
-    HOSTNAME=`cat /proc/sys/kernel/hostname`
-    # Netkit debugging log storage elsewhere than the virtual machine
-    LOGDIR=/hostlab/logs/$HOSTNAME
-
-    # If desired, use just $HNET/component/core for Lua, instead of
-    # whatever's built into the package
-    if [ "x$USE_HNET_IN_UML" = "x1" -a -d $HNET ]
-    then
-        BUILD=$HNET/build
-        CORE=$HNET/component/core
-        LUADIR=$CORE
-        BUILDLUA=$BUILD/share/lua/5.1
-        export LUA_PATH="$CORE/?.lua;$CORE/thirdparty/?.lua;$BUILDLUA/?.lua;$BUILDLUA/?/init.lua;;"
-        #LUA=lua
-    fi
-fi
-if [ ! "x$DEBUG" = "x" ]
-then
-    mkdir -p $LOGDIR
-    PM_ARGS="$PM_ARGS --debug $LOGDIR/pm.log"
-    HP_ARGS="$HP_ARGS --debug $LOGDIR/hp.log"
-fi
-
-PM=$LUADIR/pm.lua
-MDNS=$LUADIR/mdns.lua
-HP=$LUADIR/hp.lua
-
-start() {
-    # Needed by BIRD
-    mkdir -p /usr/local/var/run
-
-    # Needed by dhcpd's we trigger
-    mkdir -p /var/db
-
-    # Create dummy lease files
-    touch /var/db/dhcpd.leases
-    touch /var/db/dhcpd6.leases
-
-    if [ -f $PM_EXTRA_ARGS_FILENAME ]
-    then
-        PM_EXTRA_ARGS=`cat $PM_EXTRA_ARGS_FILENAME`
-    fi
-
-    SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
-    SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
+handle_args() {
+	local arg="$1"
+	procd_append_param command "$arg"
 }
 
-stop() {
-    SERVICE_NAME=hp service_stop $LUA $HP
-    SERVICE_NAME=pm service_stop $LUA $PM
+start_instance_pm() {
+	local s="$1"
 
-    # Stop the bird4/bird6 they were running too
-    /usr/share/hnet/bird4_handler.sh stop
-    /usr/share/hnet/bird6_handler.sh stop
+	procd_open_instance
+	procd_set_param command "$PROG" /usr/share/lua/pm.lua
+
+	config_list_foreach "$s" args handle_args
+
+	procd_close_instance
+}
+
+start_instance_hp() {
+	local s="$1"
+
+	procd_open_instance
+	procd_set_param command "$PROG" /usr/share/lua/hp.lua
+
+	config_list_foreach "$s" args handle_args
+
+	procd_close_instance
+}
+
+start_service() {
+
+	[ ! -d "/usr/local/var/run" ] && mkdir -p "/usr/local/var/run"
+
+	[ ! -d "/var/db" ] && mkdir -p "/var/db"
+
+	touch /var/db/dhcpd.leases
+	touch /var/db/dhcpd6.leases
+
+	config_load 'hnet'
+	config_foreach start_instance_pm 'pm'
+	config_foreach start_instance_hp 'hp'
 }
