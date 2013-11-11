@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=112301324125ad87ff53bf8b6ae5a89d5e9903ad
+PKG_SOURCE_VERSION:=0d90121ad88adf16fe65f2c5a0a8a1f0178f4b60
 PKG_VERSION:=2013-10-29-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git://github.com/Oryon/hnet-core.git
+PKG_SOURCE_URL:=git://github.com/fingon/hnet-core.git
 PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2

@@ -19,7 +19,7 @@ PKG_SOURCE_VERSION:=4472d8b5c54a9e10ba937307ddd40311fa1bb920
 PKG_VERSION:=2013-10-21-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=git://github.com/Oryon/bird-ext-lsa.git
+PKG_SOURCE_URL:=git://github.com/fingon/bird-ext-lsa.git
 PKG_SOURCE_PROTO:=git
 PKG_BUILD_DEPENDS:=libncurses libreadline
 
