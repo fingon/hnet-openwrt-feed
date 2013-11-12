@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=473d8ce9fdfb27c89f14b066dec29ba34532f2fa
+PKG_SOURCE_VERSION:=de32bf94b4f9787ce83f42eac7272b0dc44f72da
 PKG_VERSION:=2013-11-12-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
@@ -60,15 +60,14 @@ endef
 
 define Package/hnet/install
 	$(INSTALL_DIR) $(1)/usr/share/lua
-	$(CP) $(PKG_BUILD_DIR)/*.lua $(1)/usr/share/lua
-	$(CP) $(PKG_BUILD_DIR)/stress/*_raw.lua $(1)/usr/share/lua
+	$(CP) $(PKG_BUILD_DIR)/{codec,dns*,elsa_pa,hp*,ipv*,j*,l*,m*,o*,pa*,per*,pm,pm_core,pm_handler,pm_bird4,pm_led,pm_memory,pm_netifd*,s*}.lua $(1)/usr/share/lua
 	$(INSTALL_DIR) $(1)/usr/sbin
 	ln -s /usr/share/lua/skvtool.lua $(1)/usr/sbin/skvtool
 	chmod a+x $(1)/usr/share/lua/{pm,hp,skvtool}.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua
 	$(CP) $(PKG_BUILD_DIR)/thirdparty/*.lua $(1)/usr/lib/lua
 	$(INSTALL_DIR) $(1)/usr/share/hnet
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/*.sh $(1)/usr/share/hnet
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/{bird*,led*}.sh $(1)/usr/share/hnet
 	$(INSTALL_DIR) $(1)/sbin
 	$(INSTALL_BIN) files/dhclient-script $(1)/sbin
 	$(INSTALL_DIR) $(1)/etc/dhcp/dhclient-exit-hooks.d
@@ -84,5 +83,7 @@ define Package/hnet/install
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
 	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 endef
+# Useful for performance tests, not so much otherwise
+#$(CP) $(PKG_BUILD_DIR)/stress/*_raw.lua $(1)/usr/share/lua
 
 $(eval $(call BuildPackage,hnet))
