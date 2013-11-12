@@ -30,12 +30,12 @@ start_instance_pm() {
     then
 	procd_append_param command "--disable_always_ula"
     fi
-        # always = default in pm.lua
+    # always = default in pm.lua
 
-        # non-openwrt, we would take over the openwrt infra -> not good
+    # non-openwrt, we would take over the openwrt infra -> not good
     procd_append_param command "--openwrt"
 
-        # Custom args last so they can override the defaults..
+    # custom args last so they can override the defaults produced by the options
     config_list_foreach "$s" args handle_args
 
     procd_close_instance
