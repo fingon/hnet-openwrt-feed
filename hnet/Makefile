@@ -26,7 +26,7 @@ define Package/hnet
   TITLE:=hnet
   URL:=https://github.com/fingon/hnet-core
   # These are 'core depends' that we need to function at all
-  DEPENDS:=+lua +ip +lualfs +hnet-luasocket +luavstruct +luamd5 +bird6-elsa
+  DEPENDS:=+lua +ip +lualfs +luasocket +luavstruct +luamd5 +bird6-elsa
   # These are sometime replaceable ones, but in principle they are helpful too
   # (Used to provide services / get configuration)
   DEPENDS+=+bird4 +odhcpd
