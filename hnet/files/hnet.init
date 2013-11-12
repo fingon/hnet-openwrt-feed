@@ -17,7 +17,7 @@ start_instance_pm() {
     local s="$1"
 
     procd_open_instance
-    procd_set_param command "$PROG" /usr/share/lua/pm.lua
+    procd_set_param command "$PROG" /usr/share/lua/pm.lua '--openwrt'
 
     config_get debug "$s" debug
     [ -n "$debug" ] && procd_append_param command --debug "$debug"
@@ -32,9 +32,6 @@ start_instance_pm() {
     fi
     # always = default in pm.lua
 
-    # non-openwrt, we would take over the openwrt infra -> not good
-    procd_append_param command "--openwrt"
-
     # custom args last so they can override the defaults produced by the options
     config_list_foreach "$s" args handle_args
 
@@ -47,9 +44,11 @@ start_instance_hp() {
     procd_open_instance
     procd_set_param command "$PROG" /usr/share/lua/hp.lua
 
-    config_list_foreach "$s" args handle_args
     config_get debug "$s" debug
     [ -n "$debug" ] && procd_append_param command --debug "$debug"
+
+    # custom args last so they can override the defaults produced by the options
+    config_list_foreach "$s" args handle_args
 
     procd_close_instance
 }
