@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-PKG_SOURCE_VERSION:=2ac17e7b5efe4e63c9d3c512954994f984ac26b4
-PKG_VERSION:=2013-07-30-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=de32bf94b4f9787ce83f42eac7272b0dc44f72da
+PKG_VERSION:=2013-11-12-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -26,27 +26,21 @@ define Package/hnet
   TITLE:=hnet
   URL:=https://github.com/fingon/hnet-core
   # These are 'core depends' that we need to function at all
-  DEPENDS:=+lua +ip +lualfs +hnet-luasocket +luavstruct +luamd5 +bird6-elsa
+  DEPENDS:=+lua +ip +luasocket +luavstruct +luamd5 +bird6-elsa
   # These are sometime replaceable ones, but in principle they are helpful too
   # (Used to provide services / get configuration)
-  DEPENDS+=+bird4
-  # These we should get rid of at some point (replace servers with
-  # dnsmasq, and client's with something - busybox?)
-  #DEPENDS+=+radvd
-  #DEPENDS+=+isc-dhcp-server-ipv4
-  #DEPENDS+=+isc-dhcp-server-ipv6
-  DEPENDS+=+isc-dhcp-client-ipv4
-  #DEPENDS+=+isc-dhcp-client-ipv6
-
-  # Require rdisc6 just so that network gets set up bit faster
-  DEPENDS+=+rdisc6
-
-  DEPENDS+=+hnet-dnsmasq-dhcpv6
-  DEPENDS+=+hnet-odhcp6c
+  DEPENDS+=+bird4 +odhcpd
+  # This is needed for interaction with OWRT
+  DEPENDS+=+libubus-lua
 
   # uclibc does not do RFC4007 getnameinfo (and some other things)
   # See e.g. https://bugs.busybox.net/show_bug.cgi?id=6062
-  DEPENDS+=+@USE_EGLIBC
+  # sbyx said he'd take care of it ~20131001
+
+  # UML kernel doesn't seem to work either for some reason with uclibc
+  # (But guess it doesn't really force us to have strict dependency,
+  # but instead just build UML builds with eglibc).
+  #DEPENDS+=+@USE_EGLIBC
 
   # We're also IPv6-only
   DEPENDS+=+@IPV6
@@ -66,25 +60,30 @@ endef
 
 define Package/hnet/install
 	$(INSTALL_DIR) $(1)/usr/share/lua
-	$(CP) $(PKG_BUILD_DIR)/*.lua $(1)/usr/share/lua
+	$(CP) $(PKG_BUILD_DIR)/{codec,dns*,elsa_pa,hp*,ipv*,j*,l*,m*,o*,pa*,per*,pm,pm_core,pm_handler,pm_bird4,pm_led,pm_memory,pm_netifd*,s*}.lua $(1)/usr/share/lua
 	$(INSTALL_DIR) $(1)/usr/sbin
 	ln -s /usr/share/lua/skvtool.lua $(1)/usr/sbin/skvtool
 	chmod a+x $(1)/usr/share/lua/{pm,hp,skvtool}.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua
 	$(CP) $(PKG_BUILD_DIR)/thirdparty/*.lua $(1)/usr/lib/lua
 	$(INSTALL_DIR) $(1)/usr/share/hnet
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/*.sh $(1)/usr/share/hnet
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/{bird*,led*}.sh $(1)/usr/share/hnet
 	$(INSTALL_DIR) $(1)/sbin
 	$(INSTALL_BIN) files/dhclient-script $(1)/sbin
 	$(INSTALL_DIR) $(1)/etc/dhcp/dhclient-exit-hooks.d
 	$(CP) files/dhclient-exit-hooks  $(1)/etc
 	$(CP) files/dhclient.conf $(1)/etc/dhcp/dhclient6-hnet.conf
 	$(CP) files/use-v4  $(1)/etc/dhcp/dhclient-exit-hooks.d
-	$(CP) files/bird6.conf  $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_BIN) files/hotplug.sh $(1)/etc/hotplug.d/iface/90-hnet
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) files/hnet.init $(1)/etc/init.d/hnet
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) files/disable-hnet $(1)/etc/uci-defaults/hnet
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) files/hnet.config $(1)/etc/config/hnet
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 endef
+# Useful for performance tests, not so much otherwise
+#$(CP) $(PKG_BUILD_DIR)/stress/*_raw.lua $(1)/usr/share/lua
 
 $(eval $(call BuildPackage,hnet))

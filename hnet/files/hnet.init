@@ -2,150 +2,63 @@
 # Author: Markus Stenberg <markus.stenberg@iki.fi>
 # Copyright (C) 2012 cisco Systems, Inc.
 
-# Disable ULA generation + use fake DHCPv6d for prefix class support
-#PM_ARGS="--disable_ula -f"
-
-# Disable ULA generation + use dnsmasq 
-PM_ARGS="--disable_ula -m"
-
-# Use dnsmasq, no ULA, use hybrid proxy
-PM_ARGS="--disable_ula -m -h"
-
-# Hybrid proxy should use OSPF..
-HP_ARGS="--ospf"
-
-# Choose your .. Lua. ;)
-# No prefix -> use the binary as-is and hope it has #! .. 
-LUA=/usr/bin/lua
-
-# Use luajit alpha if available
-LUAJIT=luajit-2.1.0-alpha
-if [ -f /usr/bin/$LUAJIT ]
-then
-# Override non-C Lua path; for some reason, the luajit-2.1.0-alpha we
-# build has different default path despite us providing a PREFIX for
-# it.
-export LUA_PATH='/usr/lib/lua/?.lua;/usr/lib/lua/?/init.lua;/usr/share/lua/?.lua'
-
-
-# Override Lua too (duh)
-LUA=$LUAJIT
-fi
-
-
 START=90
+STOP=10
 
-SERVICE_DAEMONIZE=1
-SERVICE_WRITE_PID=1
+USE_PROCD=1
+PROG=/usr/bin/lua
 
-
-DEBUG=0
-
-PM_EXTRA_ARGS_FILENAME=/etc/hnet-pm.args
-
-BIRD=/usr/sbin/bird6-elsa
-PM=/usr/share/lua/pm.lua
-MDNS=/usr/share/lua/mdns.lua
-HP=/usr/share/lua/hp.lua
-
-if [ -d /hosthome ]
-then
-    # Always debug in NetKit topology
-    DEBUG=1
-
-    # And stow logs on user's filesystem
-    HOSTNAME=`cat /proc/sys/kernel/hostname`
-    # Netkit debugging log storage elsewhere than the virtual machine
-    LOGDIR=/hostlab/logs/$HOSTNAME
-    mkdir -p $LOGDIR
-else
-    LOGDIR=/tmp
-fi
-
-start() {
-    # Needed by BIRD
-    mkdir -p /usr/local/var/run
-
-    # Needed by dhcpd's we trigger
-    mkdir -p /var/db
-
-    # Create dummy lease files
-    touch /var/db/dhcpd.leases
-    touch /var/db/dhcpd6.leases
-
-    # Stop+disable some services that conflict with us
-    for SERVICE in dhcpd dhcpd6 bird4 dhclient dhclient6 radvd dnsmasq firewall netifd
-    do
-        if [ -f /etc/init.d/$SERVICE ]
-        then
-            /etc/init.d/$SERVICE stop
-
-            # This would be better, but more radical choice. For the
-            # time being, we just do the stop, and hope it's enough
-            # (although it makes booting device up somewhat less
-            # efficient than it could be)
-
-            #/etc/init.d/$SERVICE disable
-        fi
-    done
-
-    # Reset the ip -6 rules to defaults (needed since some AA version)
-    ip -6 rule flush
-    ip -6 rule add pref 32768 lookup main
-
-    if [ -f $PM_EXTRA_ARGS_FILENAME ]
-    then
-        PM_EXTRA_ARGS=`cat $PM_EXTRA_ARGS_FILENAME`
-    fi
-
-    CONF=/etc/bird6.conf
-    if [ "x$DEBUG" = "x1" ]
-    then
-        # First, start pm
-        
-        # PM_EXTRA_ARGS (from PM_EXTRA_ARGS_FILENAME)
-
-        ENABLE_MST_DEBUG=1 $LUA $PM $PM_ARGS $PM_EXTRA_ARGS > $LOGDIR/pm.log 2>&1 &
-
-        # Then wait a second (for it to get the skv port up)
-        sleep 1
-
-        # Then hybrid proxy
-        ENABLE_MST_DEBUG=1 $LUA $HP $HP_ARGS > $LOGDIR/hp.log 2>&1 &
-
-        # Rewrite the configuration file to store to logfile
-        # on simulated UML host as well
-        RCONF=/tmp/bird6.conf
-
-        egrep -v '^log syslog all' $CONF > $RCONF
-        echo "log \"$LOGDIR/bird6.log\" all;" >> $RCONF
-
-        # And then fire up the BIRD
-        ENABLE_MST_DEBUG=1 $BIRD -c $RCONF
-    else
-	SERVICE_NAME=pm service_start $LUA $PM $PM_ARGS $PM_EXTRA_ARGS
-        sleep 1
-	SERVICE_NAME=hp service_start $LUA $HP $HP_ARGS
-	SERVICE_NAME="" service_start $BIRD -d -c $CONF
-    fi
+handle_args() {
+    local arg="$1"
+    procd_append_param command "$arg"
 }
 
-stop() {
-    if [ "x$DEBUG" = "x1" ]
+start_instance_pm() {
+    local s="$1"
+
+    procd_open_instance
+    procd_set_param command "$PROG" /usr/share/lua/pm.lua '--openwrt'
+
+    config_get debug "$s" debug
+    [ -n "$debug" ] && procd_append_param command --debug "$debug"
+
+    config_get ula_mode "$s" ula_mode
+    if [ "$ula_mode" = "never" ]
     then
-        # If debugging, killing is enough
-        # (And _hope_ nobody else has lua process name, smirk)
-        killall bird6-elsa
-        killall $LUA
-    else
-        # XXX - does service_stop even _work_ with $LUA prefixed commands?
-	SERVICE_NAME=hp service_stop $LUA $HP
-	SERVICE_NAME=pm service_stop $LUA $PM
-	SERVICE_NAME="" service_stop $BIRD
+	procd_append_param command "--disable_ula"
+    elif [ -z "$ula_mode" ]
+    then
+	procd_append_param command "--disable_always_ula"
     fi
+    # always = default in pm.lua
+
+    # custom args last so they can override the defaults produced by the options
+    config_list_foreach "$s" args handle_args
+
+    procd_close_instance
 }
 
-reload() {
-    stop
-    start
+start_instance_hp() {
+    local s="$1"
+
+    procd_open_instance
+    procd_set_param command "$PROG" /usr/share/lua/hp.lua
+
+    config_get debug "$s" debug
+    [ -n "$debug" ] && procd_append_param command --debug "$debug"
+
+    # custom args last so they can override the defaults produced by the options
+    config_list_foreach "$s" args handle_args
+
+    procd_close_instance
+}
+
+start_service() {
+    config_load 'hnet'
+    config_foreach start_instance_pm 'pm'
+    config_foreach start_instance_hp 'hp'
+}
+
+service_triggers() {
+    procd_add_config_trigger "hnet" "/etc/init.d/hnet" "start"
 }
