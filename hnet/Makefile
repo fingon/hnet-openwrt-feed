@@ -18,6 +18,13 @@ PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
+PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_hnet-setup-network
+PKG_CONFIG_DEPENDS+=CONFIG_TARGET_ar71xx_generic_WNDR3700
+PKG_CONFIG_DEPENDS+=CONFIG_TARGET_ar71xx_generic_WZRHPAG300H
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-hostname
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-hostname
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-disdnsmasq
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/hnet
@@ -52,6 +59,10 @@ service discovery for a home network consisting of multiple routers connected
 to multiple service providers
 endef
 
+define Package/hnet/config
+	source "$(SOURCE)/Config.in"
+endef
+
 define Build/Configure
 endef
 
@@ -82,8 +93,32 @@ define Package/hnet/install
 	$(INSTALL_CONF) files/hnet.config $(1)/etc/config/hnet
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
 	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
+# Custom hnet configuration options
+# /usr/share/hnet/setup is used to contain things that will be used by S06hnet-setuponce.
+# S06hnet-setuponce is executed during the first boot, and deletes itself before rebooting.
+	$(INSTALL_DIR) $(1)/usr/share/hnet/setup
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(CP) files/setup/hnet-setuponce.sh $(1)/etc/uci-defaults
+	chmod a+x $(1)/etc/uci-defaults/hnet-setuponce.sh
+# Set custom network config file
+ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)
+ifeq ($(CONFIG_TARGET_ar71xx_generic_WNDR3700),y)
+	$(CP) files/setup/platforms/WNDR3700/network $(1)/usr/share/hnet/setup
+else ifeq ($(CONFIG_TARGET_ar71xx_generic_WZRHPAG300H),y)
+	$(CP) files/setup/platforms/WZRHPAG300H/network $(1)/usr/share/hnet/setup
+else
+	echo "No network configuration file available for selected target"
+	exit 1
+endif
+endif
+# Set the custom hostname
+ifeq ($(CONFIG_PACKAGE_hnet-setup-hostname),y)
+	echo $(firstword $(CONFIG_PACKAGE_hnet-hostname)) > $(1)/usr/share/hnet/setup/hostname
+endif
+# Create enable file
+ifeq ($(CONFIG_PACKAGE_hnet-setup-disdnsmasq),y)
+	echo 1 > $(1)/usr/share/hnet/setup/disdnsmasq
+endif
 endef
-# Useful for performance tests, not so much otherwise
-#$(CP) $(PKG_BUILD_DIR)/stress/*_raw.lua $(1)/usr/share/lua
 
 $(eval $(call BuildPackage,hnet))
