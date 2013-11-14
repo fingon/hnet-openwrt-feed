@@ -1,0 +1,30 @@
+#
+# Author: Pierre Pfister <pierre pfister@darou.fr>
+#
+# Copyright (c) 2013 Cisco Systems, Inc.
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+
+	menu "hnet custom configuration"
+		depends on PACKAGE_hnet
+
+		config HNET_SETUP_NETWORK
+			depends on TARGET_ar71xx_generic_WNDR3700 || TARGET_ar71xx_generic_WZRHPAG300H
+			bool "Install platform specific network config file"
+			default n
+
+		config HNET_SETUP_DISDNSMASQ
+			bool "Disable dnsmasq"
+			default n
+
+		config HNET_SETUP_HOSTNAME
+			bool "Set a custom hostname"
+			default n
+
+		config HNET_HOSTNAME
+			depends on HNET_SETUP_HOSTNAME
+			string "Choose hostname"
+			default "inner"
+
+	endmenu
