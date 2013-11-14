@@ -18,12 +18,12 @@ PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
-PKG_CONFIG_DEPENDS:=CONFIG_HNET_SETUP_NETWORK
+PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_hnet-setup-network
 PKG_CONFIG_DEPENDS+=CONFIG_TARGET_ar71xx_generic_WNDR3700
 PKG_CONFIG_DEPENDS+=CONFIG_TARGET_ar71xx_generic_WZRHPAG300H
-PKG_CONFIG_DEPENDS+=CONFIG_HNET_SETUP_HOSTNAME
-PKG_CONFIG_DEPENDS+=CONFIG_HNET_HOSTNAME
-PKG_CONFIG_DEPENDS+=CONFIG_HNET_SETUP_DISDNSMASQ
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-hostname
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-hostname
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-disdnsmasq
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -101,7 +101,7 @@ define Package/hnet/install
 	$(CP) files/setup/hnet-setuponce.sh $(1)/etc/uci-defaults
 	chmod a+x $(1)/etc/uci-defaults/hnet-setuponce.sh
 # Set custom network config file
-ifeq ($(CONFIG_HNET_SETUP_NETWORK),y)
+ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)
 ifeq ($(CONFIG_TARGET_ar71xx_generic_WNDR3700),y)
 	$(CP) files/setup/platforms/WNDR3700/network $(1)/usr/share/hnet/setup
 else ifeq ($(CONFIG_TARGET_ar71xx_generic_WZRHPAG300H),y)
@@ -112,11 +112,11 @@ else
 endif
 endif
 # Set the custom hostname
-ifeq ($(CONFIG_HNET_SETUP_HOSTNAME),y)
-	echo $(firstword $(CONFIG_HNET_HOSTNAME)) > $(1)/usr/share/hnet/setup/hostname
+ifeq ($(CONFIG_PACKAGE_hnet-setup-hostname),y)
+	echo $(firstword $(CONFIG_PACKAGE_hnet-hostname)) > $(1)/usr/share/hnet/setup/hostname
 endif
 # Create enable file
-ifeq ($(CONFIG_HNET_SETUP_DISDNSMASQ),y)
+ifeq ($(CONFIG_PACKAGE_hnet-setup-disdnsmasq),y)
 	echo 1 > $(1)/usr/share/hnet/setup/disdnsmasq
 endif
 endef

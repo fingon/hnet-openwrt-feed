@@ -9,21 +9,21 @@
 	menu "hnet custom configuration"
 		depends on PACKAGE_hnet
 
-		config HNET_SETUP_NETWORK
+		config PACKAGE_hnet-setup-network
 			depends on TARGET_ar71xx_generic_WNDR3700 || TARGET_ar71xx_generic_WZRHPAG300H
 			bool "Install platform specific network config file"
 			default n
 
-		config HNET_SETUP_DISDNSMASQ
+		config PACKAGE_hnet-setup-disdnsmasq
 			bool "Disable dnsmasq"
 			default n
 
-		config HNET_SETUP_HOSTNAME
+		config PACKAGE_hnet-setup-hostname
 			bool "Set a custom hostname"
 			default n
 
-		config HNET_HOSTNAME
-			depends on HNET_SETUP_HOSTNAME
+		config PACKAGE_hnet-hostname
+			depends on PACKAGE_hnet-setup-hostname
 			string "Choose hostname"
 			default "inner"
 
