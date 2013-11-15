@@ -98,20 +98,21 @@ define Package/hnet/install
 # /usr/share/hnet/setup contains things that will be used by hnet-setuponce.sh.
 # hnet-setuponce.sh is put in /etc/uci-defaults/, and is therefore executed once, before deletion.
 	$(INSTALL_DIR) $(1)/usr/share/hnet/setup
+	$(INSTALL_DIR) $(1)/usr/share/hnet/config
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(CP) files/setup/hnet-setuponce.sh $(1)/etc/uci-defaults
 	chmod a+x $(1)/etc/uci-defaults/hnet-setuponce.sh
 
-# Set custom network config file
-ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)
+# Install custom network config file
 ifeq ($(CONFIG_TARGET_ar71xx_generic_WNDR3700),y)
-	$(CP) files/setup/platforms/WNDR3700/network $(1)/usr/share/hnet/setup
+	$(CP) files/setup/platforms/WNDR3700/network $(1)/usr/share/hnet/config
 else ifeq ($(CONFIG_TARGET_ar71xx_generic_WZRHPAG300H),y)
-	$(CP) files/setup/platforms/WZRHPAG300H/network $(1)/usr/share/hnet/setup
-else
-	echo "No network configuration file available for selected target"
-	exit 1
+	$(CP) files/setup/platforms/WZRHPAG300H/network $(1)/usr/share/hnet/config
 endif
+
+# Set custom network config file autoinstall
+ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)
+	echo 1 > $(1)/usr/share/hnet/setup/network
 endif
 
 # Set the custom hostname
