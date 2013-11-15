@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
 PKG_SOURCE_VERSION:=de32bf94b4f9787ce83f42eac7272b0dc44f72da
-PKG_VERSION:=2013-11-12-$(PKG_SOURCE_VERSION)
+PKG_VERSION:=2013-11-15-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -93,13 +93,15 @@ define Package/hnet/install
 	$(INSTALL_CONF) files/hnet.config $(1)/etc/config/hnet
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
 	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
+
 # Custom hnet configuration options
-# /usr/share/hnet/setup is used to contain things that will be used by S06hnet-setuponce.
-# S06hnet-setuponce is executed during the first boot, and deletes itself before rebooting.
+# /usr/share/hnet/setup contains things that will be used by hnet-setuponce.sh.
+# hnet-setuponce.sh is put in /etc/uci-defaults/, and is therefore executed once, before deletion.
 	$(INSTALL_DIR) $(1)/usr/share/hnet/setup
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(CP) files/setup/hnet-setuponce.sh $(1)/etc/uci-defaults
 	chmod a+x $(1)/etc/uci-defaults/hnet-setuponce.sh
+
 # Set custom network config file
 ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)
 ifeq ($(CONFIG_TARGET_ar71xx_generic_WNDR3700),y)
@@ -111,11 +113,13 @@ else
 	exit 1
 endif
 endif
+
 # Set the custom hostname
 ifeq ($(CONFIG_PACKAGE_hnet-setup-hostname),y)
 	echo $(firstword $(CONFIG_PACKAGE_hnet-hostname)) > $(1)/usr/share/hnet/setup/hostname
 endif
-# Create enable file
+
+# Set automatic dnsmasq disabling
 ifeq ($(CONFIG_PACKAGE_hnet-setup-disdnsmasq),y)
 	echo 1 > $(1)/usr/share/hnet/setup/disdnsmasq
 endif
