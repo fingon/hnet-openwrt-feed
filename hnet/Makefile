@@ -130,6 +130,7 @@ define Package/hnet/postinst
 #!/bin/sh
 /etc/uci-defaults/hnet-setuponce.sh
 rm -f /etc/uci-defaults/hnet-setuponce.sh
+/etc/init.d/network reload
 /etc/init.d/hnet start
 exit 0
 endef
