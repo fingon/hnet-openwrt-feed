@@ -1,30 +1,44 @@
 #
-# Author: Pierre Pfister <pierre pfister@darou.fr>
+# Author: Pierre Pfister <pierre.pfister at darou.fr>
 #
 # Copyright (c) 2013 Cisco Systems, Inc.
 #
 # This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
+#
 
 	menu "hnet custom configuration"
 		depends on PACKAGE_hnet
 
 		config PACKAGE_hnet-setup-network
 			depends on TARGET_ar71xx_generic_WNDR3700 || TARGET_ar71xx_generic_WZRHPAG300H
-			bool "Install platform specific network config file"
+			bool "Install platform specific network configuration file"
 			default n
+			help
+			  Default OpenWRT network configuration is 
+			  mostly switched. This option will install 
+			  a routing-oriented network configuration file.
 
 		config PACKAGE_hnet-setup-disdnsmasq
 			bool "Disable dnsmasq"
 			default n
+			help
+			  dnsmasq can interfere with hnet.
+			  It may be good to disable it.
 
 		config PACKAGE_hnet-setup-hostname
 			bool "Set a custom hostname"
 			default n
+			help
+			  This option allows you to modify the hostname 
+			  after installation.
 
 		config PACKAGE_hnet-hostname
 			depends on PACKAGE_hnet-setup-hostname
 			string "Choose hostname"
 			default "inner"
+			help
+			  This must be set to the new hostname.
+			  This field must comply to the rules specified in 
+			  RFC1034.
 
 	endmenu
