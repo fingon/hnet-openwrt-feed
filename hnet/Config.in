@@ -10,13 +10,12 @@
 		depends on PACKAGE_hnet
 
 		config PACKAGE_hnet-setup-network
-			depends on TARGET_ar71xx_generic_WNDR3700 || TARGET_ar71xx_generic_WZRHPAG300H
-			bool "Install platform specific network configuration file"
+			bool "Use specific network configuration file (when available)"
 			default n
 			help
-			  Default OpenWRT network configuration is 
-			  mostly switched. This option will install 
-			  a routing-oriented network configuration file.
+			  Default OpenWRT network configuration is mostly switched. 
+			  On some platforms, hnet provides a routing-oriented network 
+			  configuration file. This option will install it automaticaly.
 
 		config PACKAGE_hnet-setup-disdnsmasq
 			bool "Disable dnsmasq"
