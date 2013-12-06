@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
 PKG_SOURCE_VERSION:=de32bf94b4f9787ce83f42eac7272b0dc44f72da
-PKG_VERSION:=2013-11-15-$(PKG_SOURCE_VERSION)
+PKG_VERSION:=2013-12-13-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -19,8 +19,6 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_hnet-setup-network
-PKG_CONFIG_DEPENDS+=CONFIG_TARGET_ar71xx_generic_WNDR3700
-PKG_CONFIG_DEPENDS+=CONFIG_TARGET_ar71xx_generic_WZRHPAG300H
 PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-hostname
 PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-hostname
 PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-disdnsmasq
@@ -95,42 +93,38 @@ define Package/hnet/install
 	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 
 # Custom hnet configuration options
-# /usr/share/hnet/setup contains things that will be used by hnet-setuponce.sh.
-# hnet-setuponce.sh is put in /etc/uci-defaults/, and is therefore executed once, before deletion.
-	$(INSTALL_DIR) $(1)/usr/share/hnet/setup
-	$(INSTALL_DIR) $(1)/usr/share/hnet/config
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(CP) files/setup/hnet-setuponce.sh $(1)/etc/uci-defaults
-	chmod a+x $(1)/etc/uci-defaults/hnet-setuponce.sh
+	$(INSTALL_BIN) files/setup-conf.sh $(1)/etc/uci-defaults/30_hnet-conf
 
-# Install custom network config file
-ifeq ($(CONFIG_TARGET_ar71xx_generic_WNDR3700),y)
-	$(CP) files/setup/platforms/WNDR3700/network $(1)/usr/share/hnet/config
-else ifeq ($(CONFIG_TARGET_ar71xx_generic_WZRHPAG300H),y)
-	$(CP) files/setup/platforms/WZRHPAG300H/network $(1)/usr/share/hnet/config
+ifeq ($(CONFIG_TARGET_ar71xx),y)
+	$(INSTALL_BIN) files/setup-network/ar71xx.sh $(1)/usr/share/hnet/netconf.sh
+else
+	$(INSTALL_BIN) files/setup-network/not-available.sh $(1)/usr/share/hnet/netconf.sh
 endif
 
-# Set custom network config file autoinstall
-ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)
-	echo 1 > $(1)/usr/share/hnet/setup/network
+ifeq ($(CONFIG_PACKAGE_hnet-setup-network),y)	
+	ln -s /usr/share/hnet/netconf.sh $(1)/etc/uci-defaults/20_hnet-net
 endif
 
-# Set the custom hostname
 ifeq ($(CONFIG_PACKAGE_hnet-setup-hostname),y)
-	echo $(firstword $(CONFIG_PACKAGE_hnet-hostname)) > $(1)/usr/share/hnet/setup/hostname
+	echo HNET_SETUP_HOSTNAME=$(firstword $(CONFIG_PACKAGE_hnet-hostname)) >> $(1)/usr/share/hnet/setupconf
 endif
 
-# Set automatic dnsmasq disabling
 ifeq ($(CONFIG_PACKAGE_hnet-setup-disdnsmasq),y)
-	echo 1 > $(1)/usr/share/hnet/setup/disdnsmasq
+	echo HNET_SETUP_DISDNSMASQ="1" >> $(1)/usr/share/hnet/setupconf
 endif
 endef
 
 define Package/hnet/postinst
 #!/bin/sh
-/etc/uci-defaults/hnet-setuponce.sh
-rm -f /etc/uci-defaults/hnet-setuponce.sh
-/etc/init.d/network reload
+if [ -e /etc/uci-defaults/20_hnet-net ]
+then
+	/etc/uci-defaults/20_hnet-net
+	rm -f /etc/uci-defaults/20_hnet-net
+	/etc/init.d/network reload
+fi
+/etc/uci-defaults/30_hnet-conf
+rm -f /etc/uci-defaults/30_hnet-conf
 /etc/init.d/hnet start
 exit 0
 endef
