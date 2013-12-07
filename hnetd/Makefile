@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnetd
-PKG_SOURCE_VERSION:=37ab65dc9e019e0b6e3c3e2250391d31178c0194
+PKG_SOURCE_VERSION:=96452dc0b62adb48e6c37cf14d50ab700e2de4b0
 PKG_VERSION:=2013-12-07-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
@@ -44,6 +44,8 @@ define Package/hnetd/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/hnetd $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/hnetd.init $(1)/etc/init.d/hnetd
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 endef
 
 $(eval $(call BuildPackage,hnetd))
