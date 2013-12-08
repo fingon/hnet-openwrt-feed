@@ -51,15 +51,21 @@ proto_hnet_setup() {
 
     json_close_object
     ubus call network add_dynamic "$(json_dump)"
+
+    # Prod hnetd
+    until hnet-call "{\"command\": 0, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
 }
 
 proto_hnet_teardown() {
     local interface="$1"
+    local device="$2"
     # nop? this? hmm
     proto_init_update "*" 0
     proto_send_update "$interface"
 
     #proto_kill_command "$interface"
+    # Prod hnetd
+    until hnet-call "{\"command\": 1, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
 }
 
 add_protocol hnet

@@ -42,6 +42,7 @@ endef
 define Package/hnetd/install
 	$(INSTALL_DIR) $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/hnetd $(1)/usr/sbin/
+	ln -s hnetd $(1)/usr/sbin/hnet-call
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/hnetd.init $(1)/etc/init.d/hnetd
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
