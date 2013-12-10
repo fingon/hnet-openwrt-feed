@@ -67,6 +67,10 @@ babel_filter() {
 	append_parm "$cfg" 'eq' 'eq'
 	append_parm "$cfg" 'le' 'le'
 	append_parm "$cfg" 'ge' 'ge'
+	append_parm "$cfg" 'src_ip' 'src-ip'
+	append_parm "$cfg" 'src_eq' 'src-eq'
+	append_parm "$cfg" 'src_le' 'src-le'
+	append_parm "$cfg" 'src_ge' 'src-ge'
 	append_parm "$cfg" 'neigh' 'neigh'
 	append_parm "$cfg" 'id' 'id'
 	append_parm "$cfg" 'proto' 'proto'
@@ -132,7 +136,9 @@ start() {
 	config_foreach babel_addif interface
 	config_foreach babel_filter filter
 	[ -z "$interfaces" ] && return 0
-	eval "/usr/sbin/babeld -D -I $pidfile $args $interfaces"
+        CMD="/usr/sbin/babeld -D -I $pidfile $args $interfaces"
+        logger -t babeld.init "running $CMD"
+	eval "$CMD"
 }
 
 stop() {
