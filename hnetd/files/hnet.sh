@@ -18,16 +18,18 @@ proto_hnet_setup() {
     # Start fake daemon if need be (not needed it seems)
     #proto_run_command "$interface" sleep 9999999
 
-    # Prod hnetd (do this _before_ starting dhcp clients, so that
-    # there's at least less of a chance of race condition with prefix
-    # acquisition.. )
-    until hnet-call "{\"command\": 0, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
-
     # It won't be 'up' before we provide first config.
     # So we provide _empty_ config here, and let pm.lua deal with
     # configuring real parameters there later..
     proto_init_update "*" 1
     proto_send_update "$interface"
+
+    # Prod hnetd (do this _before_ starting dhcp clients, so that
+    # there's at least less of a chance of race condition with prefix
+    # acquisition). It HAS to be done _after_ initial update, though,
+    # or hnetd may be unable to commit something before this init
+    # finishes (.. sigh ..)
+    until hnet-call "{\"command\": 0, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
 
     # add sub-protocols for DHCPv4 + DHCPv6
     json_init
