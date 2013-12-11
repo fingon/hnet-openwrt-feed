@@ -13,8 +13,8 @@ include $(TOPDIR)/rules.mk
 # and this package will become redundant.
 
 PKG_NAME:=hnet-babeld
-PKG_SOURCE_VERSION:=21c79fe570dedb6bd74c510e5d2d4b6c37a797ae
-PKG_VERSION:=2013-12-07-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=e399c486fa20206796d3092f0b59d3fe1858346e
+PKG_VERSION:=2013-12-11-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://git.wifi.pps.univ-paris-diderot.fr/babels
@@ -52,7 +52,7 @@ define Package/hnet-babeld/conffiles
 endef
 
 MAKE_FLAGS+= \
-	CFLAGS="$(TARGET_CFLAGS)" \
+	CFLAGS="$(TARGET_CFLAGS) -DIPV6_SUBTREES" \
 
 define Package/hnet-babeld/install
 	$(INSTALL_DIR) $(1)/usr/sbin
