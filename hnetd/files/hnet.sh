@@ -13,8 +13,15 @@ proto_hnet_setup() {
     local interface="$1"
     local device="$2"
 
+    logger -t proto-hnet "proto_hnet_setup $device/$interface"
+
     # Start fake daemon if need be (not needed it seems)
     #proto_run_command "$interface" sleep 9999999
+
+    # Prod hnetd (do this _before_ starting dhcp clients, so that
+    # there's at least less of a chance of race condition with prefix
+    # acquisition.. )
+    until hnet-call "{\"command\": 0, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
 
     # It won't be 'up' before we provide first config.
     # So we provide _empty_ config here, and let pm.lua deal with
@@ -52,20 +59,21 @@ proto_hnet_setup() {
     json_close_object
     ubus call network add_dynamic "$(json_dump)"
 
-    # Prod hnetd
-    while hnet-call "{\"command\": 0, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
 }
 
 proto_hnet_teardown() {
     local interface="$1"
     local device="$2"
+
     # nop? this? hmm
+    logger -t proto-hnet "proto_hnet_teardown $device/$interface"
+
     proto_init_update "*" 0
     proto_send_update "$interface"
 
     #proto_kill_command "$interface"
     # Prod hnetd
-    while hnet-call "{\"command\": 1, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
+    until hnet-call "{\"command\": 1, \"ifname\": \"$device\", \"handle\": \"$interface\"}" ; do sleep 1 ; done
 }
 
 add_protocol hnet
