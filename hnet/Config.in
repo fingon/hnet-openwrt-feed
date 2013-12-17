@@ -40,4 +40,18 @@
 			  This field must comply to the rules specified in 
 			  RFC1034.
 
+		config PACKAGE_hnet-dhcpv4-clientid
+			string "Optional dhcpv4 client ID in base 16"
+			default ""
+			help
+			  This is used to set a custom dhcpv4 client ID. It must be a valid
+			  client ID, written in base 16.
+
+		config PACKAGE_hnet-dhcpv6-clientid
+			string "Optional dhcpv6 client ID in base 16"
+			default ""
+			help
+			  This is used to set a custom dhcpv6 client ID. It must be a valid
+			  client ID, written in base 16.
+
 	endmenu

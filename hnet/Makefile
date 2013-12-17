@@ -22,6 +22,8 @@ PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_hnet-setup-network
 PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-hostname
 PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-hostname
 PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-setup-disdnsmasq
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-dhcpv4-clientid
+PKG_CONFIG_DEPENDS+=CONFIG_PACKAGE_hnet-dhcpv6-clientid
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -113,6 +115,16 @@ endif
 ifeq ($(CONFIG_PACKAGE_hnet-setup-disdnsmasq),y)
 	echo HNET_SETUP_DISDNSMASQ="1" >> $(1)/usr/share/hnet/setupconf
 endif
+
+# Configuring custom client ID
+ifneq ($(CONFIG_PACKAGE_hnet-dhcpv4-clientid),)
+	sed -i 's/DHCPv4_CLIENTID=""/DHCPv4_CLIENTID=$(CONFIG_PACKAGE_hnet-dhcpv4-clientid)/g' $(1)/lib/netifd/proto/hnet.sh
+endif
+
+ifneq ($(CONFIG_PACKAGE_hnet-dhcpv6-clientid),)
+	sed -i 's/DHCPv6_CLIENTID=""/DHCPv6_CLIENTID=$(CONFIG_PACKAGE_hnet-dhcpv6-clientid)/g' $(1)/lib/netifd/proto/hnet.sh
+endif
+
 endef
 
 define Package/hnet/postinst

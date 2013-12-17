@@ -4,6 +4,10 @@
 . ../netifd-proto.sh
 init_proto "$@"
 
+# Custom client ID for dhcp clients
+DHCPv4_CLIENTID=""
+DHCPv6_CLIENTID=""
+
 proto_hnet_init_config() {
     # XXX - do we want per-interface knobs?
     local dummy
@@ -35,6 +39,11 @@ proto_hnet_setup() {
     json_add_string sendopts "0x7d:000076fe020100"
 
     json_add_string proto dhcp
+    if [ ! -z "$DHCPv4_CLIENTID" ]
+    then
+        json_add_string clientid "$DHCPv4_CLIENTID"
+    fi
+
     json_close_object
     ubus call network add_dynamic "$(json_dump)"
 
@@ -42,6 +51,10 @@ proto_hnet_setup() {
     json_add_string name "${interface}_6"
     json_add_string ifname "@${interface}"
     json_add_string proto dhcpv6
+    if [ ! -z "$DHCPv6_CLIENTID" ]
+    then
+        json_add_string clientid "$DHCPv6_CLIENTID"
+    fi
 
     # Require PD, not only NA/SLAAC
     json_add_string forceprefix 1
