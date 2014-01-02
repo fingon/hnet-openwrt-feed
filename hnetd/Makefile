@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnetd
-PKG_SOURCE_VERSION:=6f3b95ac632495c31f6128e9d9ed45158995e233
-PKG_VERSION:=2013-12-11-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=f8c2e236ba6812f3279eca526046fb05ee89face
+PKG_VERSION:=2014-01-02-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -23,6 +23,9 @@ include $(INCLUDE_DIR)/cmake.mk
 
 # Spammy debug builds for now
 CMAKE_OPTIONS += -DL_LEVEL=7
+
+# OpenWRT target
+CMAKE_OPTIONS += -DBACKEND=openwrt
 
 define Package/hnetd
   SECTION:=ipv6
@@ -42,11 +45,11 @@ endef
 define Package/hnetd/install
 	$(INSTALL_DIR) $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/hnetd $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/hnet.sh $(1)/lib/netifd/proto
 	ln -s hnetd $(1)/usr/sbin/hnet-call
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/hnetd.init $(1)/etc/init.d/hnetd
-	$(INSTALL_DIR) $(1)/lib/netifd/proto
-	$(INSTALL_BIN) files/hnet.sh $(1)/lib/netifd/proto
 endef
 
 $(eval $(call BuildPackage,hnetd))
