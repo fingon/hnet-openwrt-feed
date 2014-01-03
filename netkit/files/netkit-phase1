@@ -103,6 +103,10 @@ case "$1" in
          # .. correct way to log..
          uci set "system.@system[0].log_file=/hostlab/logs/$HOSTNAME/syslog.log"
 
+         # default 16kb ringbuffer is fairly small and can result in
+         # lost messages in bursts
+         uci set "system.@system[0].log_size=256"
+
          #This seems not to be needed anymore for file based logging
          #uci set "system.@system[0].log_type=file"
          uci commit system
