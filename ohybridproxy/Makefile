@@ -29,7 +29,7 @@ define Package/ohybridproxy
   CATEGORY:=IPv6
   TITLE:=ohybridproxy
   URL:=https://github.com/sbyx/ohybridproxy
-  DEPENDS+=+libubox +mdns-utils +mdnsd
+  DEPENDS+=+libubox +mdnsd
   DEPENDS+=+@IPV6
 endef
 
