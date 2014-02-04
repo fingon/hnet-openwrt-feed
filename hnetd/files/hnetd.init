@@ -31,6 +31,9 @@ start_service() {
             procd_append_param command -n "$HOSTNAME"
         fi
     fi
+    # State file
+    procd_append_param command -s /tmp/hnetd.pa_state
+
     procd_set_param respawn
     procd_close_instance
 }
