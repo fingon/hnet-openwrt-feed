@@ -8,8 +8,8 @@
 # Copyright (c) 2014 cisco Systems, Inc.
 #
 # Created:       Fri Jan 17 11:46:30 2014 mstenber
-# Last modified: Fri Jan 17 16:46:31 2014 mstenber
-# Edit time:     7 min
+# Last modified: Mon Feb  3 14:39:15 2014 mstenber
+# Edit time:     15 min
 #
 
 # This is minimalist init.d-like start/stop script for
@@ -20,11 +20,6 @@
 OHP=ohybridproxy
 
 start() {
-    # Make sure mdnsd is running - we depend on it and fail horribly without
-    if [ -f /etc/init.d/mdnsd ]
-    then
-        /etc/init/mdnsd start
-    fi
     $OHP $* &
 }
 
@@ -35,7 +30,8 @@ stop() {
 
 CMD=$1
 # For debugging purposes
-logger -t $0 $*
+LOGNAME=`basename $0`
+echo "$*" | logger -t "$LOGNAME"
 case $CMD in
   start)
     shift
