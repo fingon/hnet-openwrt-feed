@@ -13,8 +13,8 @@ include $(TOPDIR)/rules.mk
 # and this package will become redundant.
 
 PKG_NAME:=hnet-babeld
-PKG_SOURCE_VERSION:=e399c486fa20206796d3092f0b59d3fe1858346e
-PKG_VERSION:=2013-12-11-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=757af8018a6e51ba64994d4834d41d4da8377e09
+PKG_VERSION:=2014-02-17-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://git.wifi.pps.univ-paris-diderot.fr/babels
