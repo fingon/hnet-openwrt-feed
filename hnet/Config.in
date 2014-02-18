@@ -17,13 +17,6 @@
 			  On some platforms, hnet provides a routing-oriented network 
 			  configuration file. This option will install it automaticaly.
 
-		config PACKAGE_hnet-setup-disdnsmasq
-			bool "Disable dnsmasq"
-			default n
-			help
-			  dnsmasq can interfere with hnet.
-			  It may be good to disable it.
-
 		config PACKAGE_hnet-setup-hostname
 			bool "Set a custom hostname"
 			default n
