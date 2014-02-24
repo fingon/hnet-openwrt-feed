@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnetd
-PKG_SOURCE_VERSION:=4c27f89a4097d1e3e154d8d600cefa91bfd368c9
-PKG_VERSION:=2014-02-18-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=823ef38d682b820efeb819cfb2f1809f8cbaa61b
+PKG_VERSION:=2014-02-24-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -51,6 +51,7 @@ define Package/hnetd/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/hnetd.init $(1)/etc/init.d/hnetd
 	$(INSTALL_BIN) ./files/ohp-script $(1)/usr/sbin/hnetd-ohp-script
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/generic/hnetd-routing $(1)/usr/sbin/hnetd-routing
 endef
 
 $(eval $(call BuildPackage,hnetd))
