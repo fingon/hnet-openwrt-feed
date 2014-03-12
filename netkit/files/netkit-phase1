@@ -98,7 +98,22 @@ case "$1" in
 
          # Store for later boots
          uci set "system.@system[0].hostname=$HOSTNAME"
+         mkdir -p /hostlab/logs/$HOSTNAME
+
+         # .. correct way to log..
+         uci set "system.@system[0].log_file=/hostlab/logs/$HOSTNAME/syslog.log"
+
+         # default 16kb ringbuffer is fairly small and can result in
+         # lost messages in bursts
+         uci set "system.@system[0].log_size=256"
+
+         #This seems not to be needed anymore for file based logging
+         #uci set "system.@system[0].log_type=file"
          uci commit system
+
+         # XXX - this SHOULD NOT be necessary; however, the trigger
+         # just calls 'start' and not 'restart'. 
+         /etc/init.d/log restart
 
          if [ -d /hostlab/shared ]; then
             echo "Copying shared files from /hostlab/shared/..."
@@ -114,8 +129,11 @@ case "$1" in
          fi
          
          [ ! -z "$COW" ] && touch /etc/vhostconfigured
+      else
+         # Logging was started before, but only now the mountpoint is available
+         /etc/init.d/log restart
       fi
-
+      
       # Autoconfigure interfaces, if asked to
       if [ -n "$AUTOCONF_INTERFACES" ]; then
          eval "$AUTOCONF_INTERFACES"
