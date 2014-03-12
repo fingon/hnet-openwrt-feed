@@ -7,11 +7,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hnet
-<<<<<<< HEAD
-PKG_SOURCE_VERSION:=ff2c2e12a458f2553d1e7ec27f95cfb0a9dc6534
-PKG_VERSION:=2013-12-06-$(PKG_SOURCE_VERSION)
-=======
->>>>>>> hnetd
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Markus Stenberg <fingon@iki.fi>
@@ -68,22 +63,6 @@ ifeq ($(CONFIG_PACKAGE_hnet-setup-hostname),y)
 	echo HNET_SETUP_HOSTNAME=$(firstword $(CONFIG_PACKAGE_hnet-hostname)) >> $(1)/usr/share/hnet/setupconf
 endif
 
-<<<<<<< HEAD
-ifeq ($(CONFIG_PACKAGE_hnet-setup-disdnsmasq),y)
-	echo HNET_SETUP_DISDNSMASQ="1" >> $(1)/usr/share/hnet/setupconf
-endif
-
-# Configuring custom client ID
-ifneq ($(CONFIG_PACKAGE_hnet-dhcpv4-clientid),)
-	sed -i 's/DHCPv4_CLIENTID=""/DHCPv4_CLIENTID=$(CONFIG_PACKAGE_hnet-dhcpv4-clientid)/g' $(1)/lib/netifd/proto/hnet.sh
-endif
-
-ifneq ($(CONFIG_PACKAGE_hnet-dhcpv6-clientid),)
-	sed -i 's/DHCPv6_CLIENTID=""/DHCPv6_CLIENTID=$(CONFIG_PACKAGE_hnet-dhcpv6-clientid)/g' $(1)/lib/netifd/proto/hnet.sh
-endif
-
-=======
->>>>>>> hnetd
 endef
 
 define Package/hnet/postinst
