@@ -104,8 +104,9 @@ case "$1" in
          uci set "system.@system[0].log_file=/hostlab/logs/$HOSTNAME/syslog.log"
 
          # default 16kb ringbuffer is fairly small and can result in
-         # lost messages in bursts
-         uci set "system.@system[0].log_size=256"
+         # lost messages in bursts.. and with hnetd logging, 2 megs
+         # seems appropriate (lasts few minutes in busy system)
+         uci set "system.@system[0].log_size=2048"
 
          #This seems not to be needed anymore for file based logging
          #uci set "system.@system[0].log_type=file"
